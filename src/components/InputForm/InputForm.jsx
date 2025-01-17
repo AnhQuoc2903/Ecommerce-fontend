@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { WrapperInputStyle } from "./style";
 
 const InputForm = (props) => {
-  const [valueInput, setValueInput] = useState("");
+  const [valueInput] = useState("");
   const { placeholder = "Nhận test", ...rests } = props;
   return (
     <>
