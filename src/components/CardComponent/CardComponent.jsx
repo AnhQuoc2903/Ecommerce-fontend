@@ -9,7 +9,7 @@ import {
 } from "./style";
 import { StarFilled } from "@ant-design/icons";
 import logo from "../../assets/images/logo.png";
-import h4 from "../../assets/images/h4.jpg";
+import h4 from "../../assets/images/Slice6.jpg";
 import { WrapperStyleTextSell } from "../ProductDetailComponent/style";
 
 const CardComponent = () => {
