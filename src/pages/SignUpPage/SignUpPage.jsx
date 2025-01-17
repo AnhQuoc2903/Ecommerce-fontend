@@ -7,8 +7,8 @@ import { Image } from 'antd'
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 
 const SignUpPage = () => {
-  const [isShowPassword, setIsShowPassword] = useState(false)
-  const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false)
+  const [isShowPassword] = useState(false)
+  const [isShowConfirmPassword] = useState(false)
   return (
     <div
     style={{
