@@ -9,10 +9,10 @@ import {
 } from "./style";
 import { StarFilled } from "@ant-design/icons";
 import logo from "../../assets/images/logo.png";
-import h4 from "../../assets/images/h4.jpg";
+import h10 from "../../assets/images/h10.jpg";
 import { WrapperStyleTextSell } from "../ProductDetailComponent/style";
 
-const CardComponent = () => {
+const CardComponent6 = () => {
   return (
     <WrapperCardStyle
       hoverable
@@ -22,12 +22,12 @@ const CardComponent = () => {
       cover={
         <img
           alt="example"
-          src={h4}
+          src={h10}
         />
       }
     >
       <WrapperImageStyle src={logo} />
-      <StyledNameProduct>Bé Heo</StyledNameProduct>
+      <StyledNameProduct>Iphone</StyledNameProduct>
       <WrapperReportText>
         <span style={{ marginRight: "4px" }}>
           <span>4.96 </span>
@@ -43,4 +43,4 @@ const CardComponent = () => {
   );
 };
 
-export default CardComponent;
+export default CardComponent6;

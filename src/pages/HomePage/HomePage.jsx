@@ -6,17 +6,26 @@ import {
   WrapperTypeProduct,
 } from "./style";
 import SliderCompenent from "../../components/SliderComponent/SliderCompenent";
-import slice1 from "../../assets/images/Slice1.jpg";
-import slice5 from "../../assets/images/Slice5.jpg";
-import slice4 from "../../assets/images/Slice4.jpg";
+import slice1 from "../../assets/images/h1.jpg";
+import slice5 from "../../assets/images/h2.jpg";
+import slice4 from "../../assets/images//h3.jpg";
 import CardComponent from "../../components/CardComponent/CardComponent";
+import CardComponent1 from "../../components/CardComponent/CardComponent1";
+import CardComponent2 from "../../components/CardComponent/CardComponent2";
+import CardComponent3 from "../../components/CardComponent/CardComponent3";
+import CardComponent4 from "../../components/CardComponent/CardComponent4";
+import CardComponent5 from "../../components/CardComponent/CardComponent5";
+import CardComponent6 from "../../components/CardComponent/CardComponent6";
+import CardComponent7 from "../../components/CardComponent/CardComponent7";
+import CardComponent8 from "../../components/CardComponent/CardComponent8";
+import CardComponent9 from "../../components/CardComponent/CardComponent9";
 
 
 const HomePage = () => {
   const arr = ["TV", "Tu Lanh", "Lap Top"];
   return (
     <>
-      <div style={{ width: "1270px", margin: "0 auto" }}>
+      <div style={{ width: "1270px", margin: "0 auto"}}>
         <WrapperTypeProduct>
           {arr.map((item) => {
             return <TypeProduct name={item} key={item} />;
@@ -35,15 +44,15 @@ const HomePage = () => {
           <SliderCompenent arrImages={[slice1, slice5, slice4]} />
           <WrapperProducts>
             <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
+            <CardComponent1 />
+            <CardComponent2 />
+            <CardComponent3 />
+            <CardComponent4 />
+            <CardComponent5 />
+            <CardComponent6 />
+            <CardComponent7 />
+            <CardComponent8 />
+            <CardComponent9 />
           </WrapperProducts>
           <div
             style={{

@@ -2,7 +2,6 @@ import React from "react";
 import { Image } from "antd";
 import { WrapperSliderStyle } from "./style";
 
-
 const SliderCompenent = ({ arrImages }) => {
   const settings = {
     dots: true,
@@ -15,17 +14,18 @@ const SliderCompenent = ({ arrImages }) => {
   };
 
   return (
-      <WrapperSliderStyle {...settings}>
-        {arrImages.map((image) => (
-            <Image
-              src={image}
-              alt="slider"
-              preview={false}
-              width="100%"
-              height="274px"
-            />
-        ))}
-      </WrapperSliderStyle>
+    <WrapperSliderStyle {...settings}>
+      {arrImages.map((image) => (
+        <Image
+          src={image}
+          alt="slider"
+          preview={false}
+          width="100%"
+          height="600px"
+          style={{ objectFit: "fill" }}
+        />
+      ))}
+    </WrapperSliderStyle>
   );
 };
 
