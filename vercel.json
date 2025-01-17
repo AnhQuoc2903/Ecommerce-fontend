@@ -10,7 +10,7 @@
     }
   ],
   "env": {
-    "NODE_VERSION": "22.x",
-    "NPM_VERSION": "11.x"
+    "NODE_VERSION": "18.x",
+    "NPM_VERSION": "9.x"
   }
 }
