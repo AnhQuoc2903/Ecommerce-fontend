@@ -15,16 +15,14 @@ import { WrapperStyleTextSell } from "../ProductDetailComponent/style";
 const CardComponent = () => {
   return (
     <WrapperCardStyle
-      hoverable
-      headStyle={{ width: "200px", height: "200px" }}
-      style={{ width: 200 }}
-      bodyStyle={{ padding: "10px" }}
-      cover={
-        <img
-          alt="example"
-          src={h4}
-        />
-      }
+      style={{
+        width: 200,
+        styles: {
+          header: { width: "200px", height: "200px" },
+          body: { padding: "10px" },
+        },
+      }}
+      cover={<img alt="example" src={h4} />}
     >
       <WrapperImageStyle src={logo} />
       <StyledNameProduct>Bé Heo</StyledNameProduct>
@@ -36,7 +34,7 @@ const CardComponent = () => {
         <WrapperStyleTextSell>| Da Ban 1000+</WrapperStyleTextSell>
       </WrapperReportText>
       <WrapperPriceText>
-        <span style={{marginRight: "8px"}}>1.000.000</span>
+        <span style={{ marginRight: "8px" }}>1.000.000</span>
         <WrapperDiscountText>-5%</WrapperDiscountText>
       </WrapperPriceText>
     </WrapperCardStyle>
