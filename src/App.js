@@ -1,9 +1,20 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { routes } from "./routers";
 import DefaultComponet from "./components/DefaultComponent/DefaultComponet";
+import axios from "axios";
 
 function App() {
+  useEffect(() => {
+    fetchApi();
+  }, []);
+  const fetchApi = async () => {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_URL}/product/get-all`
+    );
+    console.log("res", res);
+  };
+
   return (
     <div>
       <Router>
