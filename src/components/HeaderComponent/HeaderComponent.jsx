@@ -12,10 +12,22 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
+import { useNavigate } from "react-router-dom";
 
 const HeaderComponent = () => {
+  const navigate = useNavigate();
+  const handleNavigateLogin = () => {
+    navigate("/sign-in");
+  };
   return (
-    <div style={{ width: "100%", background: "rgb(26,148,255)", display: 'flex', justifyContent:"center" }}>
+    <div
+      style={{
+        width: "100%",
+        background: "rgb(26,148,255)",
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
       <WrapperHeader>
         <Col span={5}>
           <WrapperTextHeader>ECO WARRIORS</WrapperTextHeader>
@@ -34,7 +46,7 @@ const HeaderComponent = () => {
         >
           <WrapperHeaderAccunt>
             <UserOutlined style={{ fontSize: "30px" }} />
-            <div>
+            <div onClick={handleNavigateLogin} style={{ cursor: "pointer" }}>
               <WrapperTextHeaderSmall>Đăng nhập/Đăng Ký</WrapperTextHeaderSmall>
               <div>
                 <WrapperTextHeaderSmall>Tài Khoản</WrapperTextHeaderSmall>
