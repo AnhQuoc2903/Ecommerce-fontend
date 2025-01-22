@@ -9,12 +9,18 @@ export const WrapperContainerLeft = styled.div`
 
 export const WrapperContainerRight = styled.div`
   width: 300px;
-  background: rgb(232, 240, 254);
+  background: rgb(206, 221, 247);
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
   gap: 4px;
+`;
+
+export const WrapperText = styled.span`
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
 `;
 
 export const WrapperTextLight = styled.span`

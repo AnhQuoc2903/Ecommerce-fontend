@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
+  WrapperText,
   WrapperTextLight,
 } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
@@ -10,12 +11,19 @@ import login from "../../assets/images/login.jpg";
 import { Image } from "antd";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import * as UserServices from "../../services/UserServices";
+import { useMutationHooks } from "../../hooks/useMutationHook";
+import Loading from "../../components/LoadingComponent/Loading";
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const mutation = useMutationHooks((data) => UserServices.loginUser(data));
+
+  const { data, isPending} = mutation;
 
   const handleOnchangeEmail = (value) => {
     setEmail(value);
@@ -26,7 +34,10 @@ const SignInPage = () => {
   };
 
   const handleSignIn = () => {
-    console.log("sign-ip", email, password);
+    mutation.mutate({
+      email,
+      password,
+    });
   };
 
   const handleNavigateSignUp = () => {
@@ -38,7 +49,7 @@ const SignInPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "rgba(0,0,0,0.53)",
+        background: "rgba(151, 226, 236, 0.53)",
         height: "100vh",
       }}
     >
@@ -52,13 +63,18 @@ const SignInPage = () => {
         }}
       >
         <WrapperContainerLeft>
-          <h1>Xin chào</h1>
-          <p>Đăng nhập hoặc Tạo tài khoản</p>
+          <h1 style={{ fontWeight: "bold", fontSize: "30px" }}>Xin chào</h1>
+          <p style={{ fontWeight: "bold", fontSize: "12px" }}>
+            Đăng nhập hoặc Tạo tài khoản
+          </p>
           <InputForm
-            style={{ marginBottom: "10px" }}
+            style={{
+              marginBottom: "10px",
+              padding: "10px",
+            }}
             placeholder="adc@gmail.com"
             value={email}
-            onChange={handleOnchangeEmail} 
+            onChange={handleOnchangeEmail}
           />
           <div style={{ position: "relative" }}>
             <span
@@ -66,43 +82,66 @@ const SignInPage = () => {
               style={{
                 zIndex: 10,
                 position: "absolute",
-                top: "10px",
+                top: "12px",
                 right: "8px",
               }}
             >
-              {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
+              {isShowPassword ? (
+                <EyeFilled style={{ fontSize: "20px", color: "blue" }} />
+              ) : (
+                <EyeInvisibleFilled
+                  style={{ fontSize: "20px", color: "gray" }}
+                />
+              )}
             </span>
             <InputForm
               placeholder="password"
               type={isShowPassword ? "text" : "password"}
               value={password}
               onChange={handleOnchangePassword}
+              style={{
+                padding: "10px",
+              }}
             />
           </div>
-          <ButtonComponent
-            disabled={!email.length || !password.length}
-            onClick={handleSignIn}
-            size={40}
-            styleButton={{
-              background: "rgb(255, 57, 69)",
-              height: "48px",
-              width: "100%",
-              border: "none",
-              borderRadius: "4px",
-              margin: "20px 0 10px 0",
-            }}
-            textButton={"Đăng nhập"}
-            styleTextButton={{
-              color: "#fff",
-              fontSize: "15px",
-              fontWeight: "700",
-            }}
-          ></ButtonComponent>
+          {data?.status === "ERR" && (
+            <span
+              style={{
+                color: "red",
+                marginTop: "10px",
+                fontSize: "15px",
+                fontStyle: "italic",
+              }}
+            >
+              {data?.message}
+            </span>
+          )}
+          <Loading isPending={isPending}>
+            <ButtonComponent
+              disabled={!email.length || !password.length}
+              onClick={handleSignIn}
+              size={40}
+              styleButton={{
+                background: "rgb(255, 57, 69)",
+                height: "48px",
+                width: "100%",
+                border: "none",
+                borderRadius: "4px",
+                margin: "10px 0 10px 0",
+              }}
+              textButton={"Đăng nhập"}
+              styleTextButton={{
+                color: "#fff",
+                fontSize: "15px",
+                fontWeight: "700",
+              }}
+            ></ButtonComponent>
+          </Loading>
           <p>
             <WrapperTextLight>Quên mật khẩu</WrapperTextLight>
           </p>
           <p>
-            Chưa có tài khoản?
+            <WrapperText> Chưa có tài khoản?</WrapperText>
             <WrapperTextLight
               onClick={handleNavigateSignUp}
               style={{ marginLeft: "5px" }}
