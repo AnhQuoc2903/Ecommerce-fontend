@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
@@ -14,16 +14,41 @@ import { useNavigate } from "react-router-dom";
 import * as UserServices from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../redux/slides/userSlide";
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch("");
 
   const mutation = useMutationHooks((data) => UserServices.loginUser(data));
 
-  const { data, isPending} = mutation;
+  const { data, isPending, isSuccess } = mutation;
+
+  const handleGetDetailsUser = useCallback(
+    async (id, token) => {
+      const res = await UserServices.getDetailsUser(id, token);
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    },
+    [dispatch]
+  );
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/");
+      localStorage.setItem("access_token", data?.access_token);
+      if (data?.access_token) {
+        const decoded = jwtDecode(data?.access_token);
+        console.log("decode", decoded);
+        if (decoded?.id) {
+          handleGetDetailsUser(decoded?.id, data?.access_token);
+        }
+      }
+    }
+  }, [isSuccess, data, navigate, handleGetDetailsUser]);
 
   const handleOnchangeEmail = (value) => {
     setEmail(value);

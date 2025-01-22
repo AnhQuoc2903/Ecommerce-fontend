@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   WrapperContainerLeft,
   WrapperContainerRight,
@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import * as UserServices from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
+import * as message from "../../components//Message/Message";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -24,8 +25,20 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const mutation = useMutationHooks((data) => UserServices.signupUser(data));
+  const { data, isPending, isSuccess, isError } = mutation;
 
-  const { data, isPending } = mutation;
+  const handleNavigateSignIn = useCallback(() => {
+    navigate("/sign-in");
+  }, [navigate]);
+
+  useEffect(() => {
+    if (isSuccess && data?.status !== "ERR") {
+      message.success();
+      handleNavigateSignIn();
+    } else if (isError) {
+      message.error();
+    }
+  }, [isSuccess, isError, data, handleNavigateSignIn]);
 
   const handleOnchangeEmail = (value) => {
     setEmail(value);
@@ -39,10 +52,6 @@ const SignUpPage = () => {
     setConfirmPassword(value);
   };
 
-  const handleNavigateSignUp = () => {
-    navigate("/sign-in");
-  };
-
   const handleSignUp = () => {
     mutation.mutate({
       email,
@@ -50,6 +59,7 @@ const SignUpPage = () => {
       confirmPassword,
     });
   };
+
   return (
     <div
       style={{
@@ -175,7 +185,7 @@ const SignUpPage = () => {
           </Loading>
           <p>
             <WrapperText>Bạn đã có tài khoản?</WrapperText>
-            <WrapperTextLight onClick={handleNavigateSignUp}>
+            <WrapperTextLight onClick={handleNavigateSignIn}>
               Đăng nhập
             </WrapperTextLight>
           </p>
