@@ -39,10 +39,9 @@ const SignInPage = () => {
   useEffect(() => {
     if (isSuccess) {
       navigate("/");
-      localStorage.setItem("access_token", data?.access_token);
+      localStorage.setItem("access_token", JSON.stringify(data?.access_token));
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token);
-        console.log("decode", decoded);
         if (decoded?.id) {
           handleGetDetailsUser(decoded?.id, data?.access_token);
         }

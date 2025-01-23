@@ -22,7 +22,6 @@ const HeaderComponent = () => {
     navigate("/sign-in");
   };
 
-  console.log("user", user);
   return (
     <div
       style={{
