@@ -28,3 +28,11 @@ export const WrapperTextHeaderSmall = styled.span`
   font-size: 12px;
   color: #fff;
 `;
+
+export const WrapperContentPopup = styled.p`
+  cursor: pointer;
+  &: hover {
+    background: rgb(26, 148, 255);
+    color: #fff;
+  }
+`;

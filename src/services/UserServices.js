@@ -34,7 +34,6 @@ export const refreshToken = async () => {
   try {
     const res = await axios.post(
       `${process.env.REACT_APP_API_URL}/user/refresh-token`,
-      {},
       { withCredentials: true }
     );
     return res.data;
@@ -42,4 +41,11 @@ export const refreshToken = async () => {
     console.error("Token refresh failed:", err);
     throw err;
   }
+};
+
+export const logoutUser = async () => {
+  const res = await axiosJWT.post(
+    `${process.env.REACT_APP_API_URL}/user/log-out`
+  );
+  return res.data;
 };

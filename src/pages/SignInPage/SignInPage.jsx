@@ -37,15 +37,15 @@ const SignInPage = () => {
     [dispatch]
   );
   useEffect(() => {
-    if (isSuccess) {
-      navigate("/");
+    if (isSuccess && data?.access_token) {
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
-      if (data?.access_token) {
-        const decoded = jwtDecode(data?.access_token);
-        if (decoded?.id) {
-          handleGetDetailsUser(decoded?.id, data?.access_token);
-        }
+
+      const decoded = jwtDecode(data?.access_token);
+
+      if (decoded?.id) {
+        handleGetDetailsUser(decoded?.id, data?.access_token);
       }
+      navigate("/");
     }
   }, [isSuccess, data, navigate, handleGetDetailsUser]);
 

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useCallback, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { routes } from "./routers";
 import DefaultComponet from "./components/DefaultComponent/DefaultComponet";
@@ -7,17 +7,17 @@ import { jwtDecode } from "jwt-decode";
 import * as UserServices from "./services/UserServices";
 import { useDispatch } from "react-redux";
 import { updateUser } from "./redux/slides/userSlide";
-import axios from "axios";
 
 function App() {
   const dispatch = useDispatch("");
 
-  useEffect(() => {
-    const { storageData, decoded } = handleDecoded();
-    if (decoded?.id) {
-      handleGetDetailsUser(decoded?.id, storageData);
-    }
-  }, []);
+  const handleGetDetailsUser = useCallback(
+    async (id, token) => {
+      const res = await UserServices.getDetailsUser(id, token);
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    },
+    [dispatch]
+  );
 
   const handleDecoded = () => {
     let storageData = localStorage.getItem("access_token");
@@ -28,6 +28,13 @@ function App() {
     }
     return { decoded, storageData };
   };
+
+  useEffect(() => {
+    const { storageData, decoded } = handleDecoded();
+    if (decoded?.id) {
+      handleGetDetailsUser(decoded?.id, storageData);
+    }
+  }, [handleGetDetailsUser]);
 
   UserServices.axiosJWT.interceptors.request.use(
     async (config) => {
@@ -44,11 +51,6 @@ function App() {
     }
   );
 
-  const handleGetDetailsUser = async (id, token) => {
-    const res = await UserServices.getDetailsUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
-  };
-
   return (
     <div>
       <Router>
@@ -62,11 +64,9 @@ function App() {
                 path={Path}
                 key={Path}
                 element={
-                  <>
-                    <Layout>
-                      <Page />
-                    </Layout>
-                  </>
+                  <Layout>
+                    <Page />
+                  </Layout>
                 }
               />
             );
