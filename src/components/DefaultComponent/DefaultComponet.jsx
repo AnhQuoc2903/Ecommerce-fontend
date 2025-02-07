@@ -1,17 +1,16 @@
-import React from 'react'
-import HeaderComponent from '../HeaderComponent/HeaderComponent'
-import FooterComponent from '../FooterComponent/FooterComponent'
+import React from "react";
+import HeaderComponent from "../HeaderComponent/HeaderComponent";
+import FooterComponent from "../FooterComponent/FooterComponent";
+import "./DefaultComponent.css";
 
-const DefaultComponet = ({children}) => {
+const DefaultComponent = ({ children }) => {
   return (
-    <div>
-        <HeaderComponent/>
-        <main>
-        {children}
-      </main>
-        <FooterComponent/>
+    <div className="default-layout">
+      <HeaderComponent />
+      <main className="default-main">{children}</main>
+      <FooterComponent />
     </div>
-  )
-}
+  );
+};
 
-export default DefaultComponet
+export default DefaultComponent;

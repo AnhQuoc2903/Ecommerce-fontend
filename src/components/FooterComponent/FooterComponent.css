@@ -1,9 +1,10 @@
 .footer {
-  background-color: rgb(26, 148, 255);
-  color: #fff;
-  padding: 10px 20px;
-  text-align: left;
-  margin-top: 1000px;
+  position: relative;
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
 }
 
 .footer-container {
@@ -13,7 +14,6 @@
   gap: 20px;
 }
 
-/* Cột */
 .footer-column {
   flex: 1;
   min-width: 200px;

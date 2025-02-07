@@ -28,7 +28,6 @@ const FooterComponent = () => {
           </ul>
         </div>
 
-        {/* Cột 3: Contact Info */}
         <div className="footer-column">
           <h4>Contact Us</h4>
           <p>123 Business Avenue</p>

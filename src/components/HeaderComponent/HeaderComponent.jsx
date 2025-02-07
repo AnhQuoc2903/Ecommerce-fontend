@@ -41,7 +41,9 @@ const HeaderComponent = () => {
       <WrapperContentPopup onClick={handleLogout}>
         Đăng xuất
       </WrapperContentPopup>
-      <WrapperContentPopup>Thông tin người dùng</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => navigate("/profile-user")}>
+        Thông tin người dùng
+      </WrapperContentPopup>
     </div>
   );
 
@@ -56,7 +58,14 @@ const HeaderComponent = () => {
     >
       <WrapperHeader>
         <Col span={5}>
-          <WrapperTextHeader>ECO WARRIORS</WrapperTextHeader>
+          <WrapperTextHeader
+            onClick={() => navigate("/")}
+            style={{
+              cursor: "pointer",
+            }}
+          >
+            ECO WARRIORS
+          </WrapperTextHeader>
         </Col>
         <Col span={13}>
           <ButtonInputSearch
