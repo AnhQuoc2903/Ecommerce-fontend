@@ -17,9 +17,11 @@ import { updateUser } from "../../redux/slides/userSlide";
 import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "../../utils";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { Option } = Select;
+  const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -34,9 +36,14 @@ const Profile = () => {
     return UserServices.updateUser(id, rests, access_token);
   });
 
+  useEffect(() => {
+    if (!user?.access_token) {
+      navigate("/");
+    }
+  }, [user?.access_token, navigate]);
+
   const dispatch = useDispatch();
-  const { data, isPending, isSuccess, isError } = mutation;
-  console.log("data", data);
+  const { isPending, isSuccess, isError } = mutation;
 
   useEffect(() => {
     setEmail(user?.email);
@@ -131,6 +138,16 @@ const Profile = () => {
     setDob(date ? date.toDate() : null);
   };
 
+  const handleCancel = () => {
+    setEmail(user?.email);
+    setName(user?.name);
+    setAvatar(user?.avatar);
+    setPhone(user?.phone);
+    setAddress(user?.address);
+    setGender(user?.gender);
+    setDob(user?.dob);
+  };
+
   const handleUpdate = () => {
     mutation.mutate({
       id: user?.id,
@@ -189,6 +206,7 @@ const Profile = () => {
             <InputForm
               id="name"
               value={name}
+              placeholder="Nhập tên"
               onChange={handleOnchangeName}
               style={{
                 width: "100%",
@@ -221,7 +239,7 @@ const Profile = () => {
               id="phone"
               value={phone}
               onChange={handleOnchangePhone}
-              placeholder="VD: 0313456789"
+              placeholder="Nhập số điện thoại VD: 0313456789"
               style={{
                 width: "100%",
                 borderRadius: "8px",
@@ -236,6 +254,7 @@ const Profile = () => {
             <InputForm
               id="address"
               value={address}
+              placeholder="Nhập địa chỉ"
               onChange={handleOnchangeAddress}
               style={{
                 width: "100%",
@@ -273,7 +292,31 @@ const Profile = () => {
             />
           </WrapperInput>
 
-          <div style={{ textAlign: "center", marginTop: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "400px",
+              alignItems: "center",
+              marginTop: "10px",
+            }}
+          >
+            <ButtonComponent
+              onClick={handleCancel}
+              size={40}
+              styleButton={{
+                height: "40px",
+                background: "#ff4d4f",
+                borderRadius: "8px",
+                padding: "5px 10px",
+                color: "#fff",
+                fontSize: "16px",
+                fontWeight: "bold",
+                transition: "all 0.3s ease",
+                cursor: "pointer",
+              }}
+              textButton={"Hủy"}
+              styleTextButton={{ color: "#fff" }}
+            />
             <ButtonComponent
               onClick={handleUpdate}
               size={40}

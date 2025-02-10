@@ -12,7 +12,19 @@ import logo from "../../assets/images/logo.png";
 import h4 from "../../assets/images/Slice6.jpg";
 import { WrapperStyleTextSell } from "../ProductDetailComponent/style";
 
-const CardComponent = () => {
+const CardComponent = (props) => {
+  const {
+    countInStock,
+    description,
+    image,
+    name,
+    price,
+    rating,
+    type,
+    discount,
+    seller,
+  } = props;
+
   return (
     <WrapperCardStyle
       style={{
@@ -25,17 +37,17 @@ const CardComponent = () => {
       cover={<img alt="example" src={h4} />}
     >
       <WrapperImageStyle src={logo} />
-      <StyledNameProduct>Bé Heo</StyledNameProduct>
+      <StyledNameProduct>{name}</StyledNameProduct>
       <WrapperReportText>
         <span style={{ marginRight: "4px" }}>
-          <span>4.96 </span>
+          <span>{rating} </span>
           <StarFilled style={{ fontSize: "12px", color: "yellow" }} />
         </span>
-        <WrapperStyleTextSell>| Da Ban 1000+</WrapperStyleTextSell>
+        <WrapperStyleTextSell>| Da Ban {seller || 1000}+</WrapperStyleTextSell>
       </WrapperReportText>
       <WrapperPriceText>
-        <span style={{ marginRight: "8px" }}>1.000.000</span>
-        <WrapperDiscountText>-5%</WrapperDiscountText>
+        <span style={{ marginRight: "8px" }}>{price}</span>
+        <WrapperDiscountText>{discount || 5}%</WrapperDiscountText>
       </WrapperPriceText>
     </WrapperCardStyle>
   );

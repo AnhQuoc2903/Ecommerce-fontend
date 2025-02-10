@@ -10,8 +10,25 @@ import slice1 from "../../assets/images/Slice1.jpg";
 import slice5 from "../../assets/images/Slice4.jpg";
 import slice4 from "../../assets/images/Slice5.jpg";
 import CardComponent from "../../components/CardComponent/CardComponent";
+import { useQuery } from "@tanstack/react-query";
+import * as ProductServices from "../../services/ProductServices";
+import Loading from "../../components/LoadingComponent/Loading";
+
 const HomePage = () => {
   const arr = ["TV", "Tu Lanh", "Lap Top"];
+
+  const fetchProductAll = async () => {
+    const res = await ProductServices.getAllProduct();
+    return res;
+  };
+
+  const { isPending, data: products } = useQuery({
+    queryKey: ["products"],
+    queryFn: fetchProductAll,
+    retry: 3,
+    retryDelay: 1000,
+  });
+
   return (
     <>
       <SliderCompenent arrImages={[slice1, slice5, slice4]} />
@@ -33,57 +50,64 @@ const HomePage = () => {
           })}
         </WrapperTypeProduct>
       </div>
-
-      <div
-        className="body"
-        style={{
-          width: "100%",
-          backgroundColor: "#efefef",
-          borderRadius: "10px",
-        }}
-      >
+      <Loading isPending={isPending}>
         <div
-          id="container"
+          className="body"
           style={{
-            width: "1270px",
-            margin: "0 auto",
+            width: "100%",
+            backgroundColor: "#efefef",
+            borderRadius: "10px",
           }}
         >
-          <WrapperProducts>
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-          </WrapperProducts>
           <div
+            id="container"
             style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "10px",
+              width: "1270px",
+              margin: "0 auto",
             }}
           >
-            <WrapperButtonMore
-              textButton="Xem thêm"
-              type="outline"
+            <WrapperProducts>
+              {products?.data?.map((product) => {
+                return (
+                  <CardComponent
+                    key={product?._id}
+                    countInStock={product?.countInStock}
+                    description={product?.description}
+                    image={product?.image}
+                    name={product?.name}
+                    price={product?.price}
+                    rating={product?.rating}
+                    type={product?.type}
+                    discount={product?.discount}
+                    seller={product?.seller}
+                  />
+                );
+              })}
+            </WrapperProducts>
+            <div
               style={{
-                border: "1px solid rgb(11,116,229)",
-                color: "rgb(11,116,229)",
-                width: "240px",
-                height: "38px",
-                borderRadius: "4px",
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "10px",
               }}
-              styleTextButton={{ fontWeight: "bold" }}
-            />
+            >
+              <WrapperButtonMore
+                textButton="Xem thêm"
+                type="outline"
+                style={{
+                  border: "1px solid rgb(11,116,229)",
+                  color: "rgb(11,116,229)",
+                  width: "240px",
+                  height: "38px",
+                  borderRadius: "4px",
+                }}
+                styleTextButton={{ fontWeight: "bold" }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </Loading>
     </>
   );
 };

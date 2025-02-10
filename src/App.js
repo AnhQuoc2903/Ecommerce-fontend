@@ -1,15 +1,18 @@
-import React, { Fragment, useCallback, useEffect } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { routes } from "./routers";
 import DefaultComponet from "./components/DefaultComponent/DefaultComponet";
 import { isJsonString } from "./utils";
 import { jwtDecode } from "jwt-decode";
 import * as UserServices from "./services/UserServices";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "./redux/slides/userSlide";
+import Loading from "./components/LoadingComponent/Loading";
 
 function App() {
   const dispatch = useDispatch("");
+  const [isPending, setIsPending] = useState(false);
+  const user = useSelector((state) => state.user);
 
   const handleGetDetailsUser = useCallback(
     async (id, token) => {
@@ -30,10 +33,12 @@ function App() {
   };
 
   useEffect(() => {
+    setIsPending(true);
     const { storageData, decoded } = handleDecoded();
     if (decoded?.id) {
       handleGetDetailsUser(decoded?.id, storageData);
     }
+    setIsPending(false);
   }, [handleGetDetailsUser]);
 
   UserServices.axiosJWT.interceptors.request.use(
@@ -53,31 +58,33 @@ function App() {
 
   return (
     <div>
-      <Router
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      >
-        <Routes>
-          {routes.map((route) => {
-            const Path = route.path;
-            const Page = route.page;
-            const Layout = route.isShowHeader ? DefaultComponet : Fragment;
-            return (
-              <Route
-                path={Path}
-                key={Path}
-                element={
-                  <Layout>
-                    <Page />
-                  </Layout>
-                }
-              />
-            );
-          })}
-        </Routes>
-      </Router>
+      <Loading isPending={isPending} style={{ background: "#ccc" }}>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <Routes>
+            {routes.map((route) => {
+              const Page = route.page;
+              const ischeckAuth = !route.isPrivate || user.isAdmin;
+              const Layout = route.isShowHeader ? DefaultComponet : Fragment;
+              return (
+                <Route
+                  key={route.path}
+                  path={ischeckAuth ? route.path : undefined}
+                  element={
+                    <Layout>
+                      <Page />
+                    </Layout>
+                  }
+                />
+              );
+            })}
+          </Routes>
+        </Router>
+      </Loading>
     </div>
   );
 }

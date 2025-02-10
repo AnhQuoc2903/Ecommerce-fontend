@@ -19,7 +19,7 @@ import * as UserServices from "../../services/UserServices";
 import { resetUser } from "../../redux/slides/userSlide";
 import Loading from "../LoadingComponent/Loading";
 
-const HeaderComponent = () => {
+const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userName, setUserName] = useState("");
@@ -46,11 +46,16 @@ const HeaderComponent = () => {
 
   const content = (
     <div>
-      <WrapperContentPopup onClick={handleLogout}>
-        Đăng xuất
-      </WrapperContentPopup>
       <WrapperContentPopup onClick={() => navigate("/profile-user")}>
         Thông tin người dùng
+      </WrapperContentPopup>
+      {user?.isAdmin && (
+        <WrapperContentPopup onClick={() => navigate("/system/admin")}>
+          Quản lí hệ thống
+        </WrapperContentPopup>
+      )}
+      <WrapperContentPopup onClick={handleLogout}>
+        Đăng xuất
       </WrapperContentPopup>
     </div>
   );
@@ -64,7 +69,12 @@ const HeaderComponent = () => {
         justifyContent: "center",
       }}
     >
-      <WrapperHeader>
+      <WrapperHeader
+        style={{
+          justifyContent:
+            isHiddenSearch && isHiddenSearch ? "space-between" : "unset",
+        }}
+      >
         <Col span={5}>
           <WrapperTextHeader
             onClick={() => navigate("/")}
@@ -75,14 +85,16 @@ const HeaderComponent = () => {
             ECO WARRIORS
           </WrapperTextHeader>
         </Col>
-        <Col span={13}>
-          <ButtonInputSearch
-            size="large"
-            bordered={false}
-            textButton="Tim Kiem"
-            placeholder="Input search text"
-          />
-        </Col>
+        {!isHiddenSearch && (
+          <Col span={13}>
+            <ButtonInputSearch
+              size="large"
+              bordered={false}
+              textButton="Tim Kiem"
+              placeholder="Input search text"
+            />
+          </Col>
+        )}
         <Col
           span={6}
           style={{ display: "flex", gap: "30px", alignItems: "center" }}
@@ -112,7 +124,7 @@ const HeaderComponent = () => {
                       style={{
                         cursor: "pointer",
                         marginTop: "5px",
-                        maxWidth: "110px",
+                        maxWidth: "120px",
                         lineHeight: "30px",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
@@ -139,14 +151,16 @@ const HeaderComponent = () => {
               )}
             </WrapperHeaderAccunt>
           </Loading>
-          <div>
-            <Badge count={4} size="small">
-              <ShoppingCartOutlined
-                style={{ fontSize: "30px", color: "#fff" }}
-              />
-            </Badge>
-            <WrapperTextHeaderSmall>Giỏ Hàng</WrapperTextHeaderSmall>
-          </div>
+          {!isHiddenCart && (
+            <div>
+              <Badge count={4} size="small">
+                <ShoppingCartOutlined
+                  style={{ fontSize: "30px", color: "#fff" }}
+                />
+              </Badge>
+              <WrapperTextHeaderSmall>Giỏ Hàng</WrapperTextHeaderSmall>
+            </div>
+          )}
         </Col>
       </WrapperHeader>
     </div>
