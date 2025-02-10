@@ -1,11 +1,24 @@
-import { Upload } from "antd";
 import styled from "styled-components";
 
 export const WrapperHeader = styled.h1`
-  color: #000;
   font-size: 18px;
   margin: 4px 0;
   font-weight: bold;
+  text-align: center;
+  color: #1a94ff;
+`;
+
+export const AvatarWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  img {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+  }
 `;
 
 export const WrapperContentProfile = styled.div`
@@ -26,6 +39,13 @@ export const WrapperLable = styled.label`
   font-weight: 600;
   width: 100px;
   text-align: left;
+`;
+
+export const WrapperInputAvatar = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 `;
 
 export const WrapperInput = styled.div`

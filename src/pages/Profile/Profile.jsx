@@ -3,6 +3,7 @@ import {
   WrapperContentProfile,
   WrapperHeader,
   WrapperInput,
+  WrapperInputAvatar,
   WrapperLable,
 } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
@@ -11,18 +12,22 @@ import { useDispatch, useSelector } from "react-redux";
 import * as UserServices from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
-import { Button, message, Upload } from "antd";
+import { Button, DatePicker, message, Select, Upload } from "antd";
 import { updateUser } from "../../redux/slides/userSlide";
 import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "../../utils";
+import dayjs from "dayjs";
 
 const Profile = () => {
+  const { Option } = Select;
   const user = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [gender, setGender] = useState("");
+  const [dob, setDob] = useState("");
 
   const mutation = useMutationHooks((data) => {
     const { id, access_token, ...rests } = data;
@@ -39,6 +44,8 @@ const Profile = () => {
     setAvatar(user?.avatar);
     setPhone(user?.phone);
     setAddress(user?.address);
+    setGender(user?.gender);
+    setDob(user?.dob);
   }, [user]);
 
   const handleUpdateUser = useCallback(
@@ -116,12 +123,22 @@ const Profile = () => {
     setAvatar(preview);
   };
 
+  const handleOnchangeGender = (value) => {
+    setGender(value);
+  };
+
+  const handleOnchangeDob = (date) => {
+    setDob(date ? date.toDate() : null);
+  };
+
   const handleUpdate = () => {
     mutation.mutate({
       id: user?.id,
       email,
       phone,
       name,
+      gender,
+      dob,
       avatar,
       address,
       access_token: user?.access_token,
@@ -129,134 +146,152 @@ const Profile = () => {
   };
 
   return (
-    <div style={{ width: "1270px", margin: "0 auto", height: "500px" }}>
+    <div style={{ width: "1270px", margin: "0 auto" }}>
       <WrapperHeader>Thông tin người dùng</WrapperHeader>
+
       <Loading isPending={isPending}>
         <WrapperContentProfile>
-          <WrapperInput>
-            <WrapperLable htmlFor="name">Name</WrapperLable>
-            <InputForm
-              style={{ width: "300px" }}
-              id="name"
-              value={name}
-              onChange={handleOnchangeName}
-            />
-            <ButtonComponent
-              onClick={handleUpdate}
-              size={40}
-              styleButton={{
-                height: "30px",
-                width: "fit-content",
-                borderRadius: "4px",
-                padding: "2px 6px 6px",
-              }}
-              textButton={"Cập nhật"}
-              styleTextButton={{
-                color: "rgb(26, 148, 255)",
-                fontSize: "15px",
-                fontWeight: "700",
-              }}
-            ></ButtonComponent>
-          </WrapperInput>
-          <WrapperInput>
-            <WrapperLable htmlFor="email">Email</WrapperLable>
-            <InputForm
-              style={{ width: "300px" }}
-              id="email"
-              value={email}
-              disabled
-            />
-          </WrapperInput>
-          <WrapperInput>
-            <WrapperLable htmlFor="phone">Phone</WrapperLable>
-            <InputForm
-              style={{ width: "300px" }}
-              id="phone"
-              value={phone}
-              onChange={handleOnchangePhone}
-              placeholder="example: 0313456789"
-            />
-            <ButtonComponent
-              onClick={handleUpdate}
-              size={40}
-              styleButton={{
-                height: "30px",
-                width: "fit-content",
-                borderRadius: "4px",
-                padding: "2px 6px 6px",
-              }}
-              textButton={"Cập nhật"}
-              styleTextButton={{
-                color: "rgb(26, 148, 255)",
-                fontSize: "15px",
-                fontWeight: "700",
-              }}
-            ></ButtonComponent>
-          </WrapperInput>
-          <WrapperInput>
-            <WrapperLable htmlFor="avatar">Avatar</WrapperLable>
-            <Upload
-              onChange={handleOnchangeAvatar}
-              showUploadList={false}
-              maxCount={1}
-            >
-              <Button icon={<UploadOutlined />}>Select File</Button>
-            </Upload>
-
+          <WrapperInputAvatar>
             {avatar && (
               <img
                 src={avatar}
                 alt="avatar"
                 style={{
-                  height: "60px",
-                  width: "60px",
+                  height: "80px",
+                  width: "80px",
                   borderRadius: "50%",
                   objectFit: "cover",
+                  border: "2px solid #1A94FF",
+                  marginBottom: "10px",
                 }}
               />
             )}
-            <ButtonComponent
-              onClick={handleUpdate}
-              size={40}
-              styleButton={{
-                height: "30px",
-                width: "fit-content",
-                borderRadius: "4px",
-                padding: "2px 6px 6px",
-              }}
-              textButton={"Cập nhật"}
-              styleTextButton={{
-                color: "rgb(26, 148, 255)",
-                fontSize: "15px",
-                fontWeight: "700",
-              }}
-            ></ButtonComponent>
-          </WrapperInput>
+            <Upload
+              onChange={handleOnchangeAvatar}
+              showUploadList={false}
+              maxCount={1}
+            >
+              <Button
+                icon={<UploadOutlined />}
+                style={{
+                  background: "#1A94FF",
+                  color: "#fff",
+                  borderRadius: "8px",
+                }}
+              >
+                Chọn ảnh
+              </Button>
+            </Upload>
+          </WrapperInputAvatar>
+
           <WrapperInput>
-            <WrapperLable htmlFor="address">Address</WrapperLable>
+            <WrapperLable htmlFor="name">Tên</WrapperLable>
             <InputForm
-              style={{ width: "300px" }}
+              id="name"
+              value={name}
+              onChange={handleOnchangeName}
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                padding: "8px",
+                border: "1px solid #ddd",
+              }}
+            />
+          </WrapperInput>
+
+          <WrapperInput>
+            <WrapperLable htmlFor="email">Email</WrapperLable>
+            <InputForm
+              id="email"
+              value={email}
+              disabled
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                padding: "8px",
+                background: "#f5f5f5",
+                border: "1px solid #ddd",
+              }}
+            />
+          </WrapperInput>
+
+          <WrapperInput>
+            <WrapperLable htmlFor="phone">Số điện thoại</WrapperLable>
+            <InputForm
+              id="phone"
+              value={phone}
+              onChange={handleOnchangePhone}
+              placeholder="VD: 0313456789"
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                padding: "8px",
+                border: "1px solid #ddd",
+              }}
+            />
+          </WrapperInput>
+
+          <WrapperInput>
+            <WrapperLable htmlFor="address">Địa chỉ</WrapperLable>
+            <InputForm
               id="address"
               value={address}
               onChange={handleOnchangeAddress}
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                padding: "8px",
+                border: "1px solid #ddd",
+              }}
             />
+          </WrapperInput>
+
+          <WrapperInput>
+            <WrapperLable htmlFor="gender">Giới tính</WrapperLable>
+            <Select
+              id="gender"
+              style={{ width: "100%", borderRadius: "8px" }}
+              placeholder="Chọn giới tính"
+              value={gender || undefined}
+              onChange={handleOnchangeGender}
+              allowClear
+            >
+              <Option value="Nam">Nam</Option>
+              <Option value="Nữ">Nữ</Option>
+            </Select>
+          </WrapperInput>
+
+          <WrapperInput>
+            <WrapperLable htmlFor="dob">Ngày sinh</WrapperLable>
+            <DatePicker
+              id="dob"
+              value={dob ? dayjs(dob) : null}
+              onChange={handleOnchangeDob}
+              format="DD/MM/YYYY"
+              style={{ width: "100%", borderRadius: "8px" }}
+              placeholder="Chọn ngày"
+            />
+          </WrapperInput>
+
+          <div style={{ textAlign: "center", marginTop: "10px" }}>
             <ButtonComponent
               onClick={handleUpdate}
               size={40}
               styleButton={{
-                height: "30px",
-                width: "fit-content",
-                borderRadius: "4px",
-                padding: "2px 6px 6px",
+                height: "40px",
+                background: "#1A94FF",
+                borderRadius: "8px",
+                padding: "5px 10px",
+                color: "#fff",
+                fontSize: "16px",
+                fontWeight: "bold",
+                transition: "all 0.3s ease",
+                cursor: "pointer",
               }}
               textButton={"Cập nhật"}
-              styleTextButton={{
-                color: "rgb(26, 148, 255)",
-                fontSize: "15px",
-                fontWeight: "700",
-              }}
-            ></ButtonComponent>
-          </WrapperInput>
+              styleTextButton={{ color: "#fff" }}
+            />
+          </div>
         </WrapperContentProfile>
       </Loading>
     </div>

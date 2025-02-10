@@ -6,6 +6,8 @@ const initialState = {
   phone: "",
   address: "",
   avatar: "",
+  gender: "",
+  dob: "",
   access_token: "",
   id: "",
 };
@@ -22,6 +24,8 @@ export const userSlide = createSlice({
         phone = "",
         address = "",
         avatar = "",
+        gender = "",
+        dob = "",
         _id = "",
       } = action.payload;
       state.name = name;
@@ -29,6 +33,8 @@ export const userSlide = createSlice({
       state.phone = phone;
       state.address = address;
       state.avatar = avatar;
+      state.gender = gender;
+      state.dob = dob;
       state.id = _id;
       state.access_token = access_token;
     },
@@ -38,6 +44,8 @@ export const userSlide = createSlice({
       state.phone = "";
       state.address = "";
       state.avatar = "";
+      state.gender = "";
+      state.dob = "";
       state.id = "";
       state.access_token = "";
     },

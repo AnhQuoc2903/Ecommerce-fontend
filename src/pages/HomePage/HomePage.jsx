@@ -19,9 +19,7 @@ const HomePage = () => {
         style={{
           width: "100%",
           margin: "0 auto",
-          padding: "20px",
           backgroundColor: "#33CCFF",
-          borderRadius: "5px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -35,6 +33,7 @@ const HomePage = () => {
           })}
         </WrapperTypeProduct>
       </div>
+
       <div
         className="body"
         style={{

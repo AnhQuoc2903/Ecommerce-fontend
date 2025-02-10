@@ -8,6 +8,8 @@ export const WrapperTypeProduct = styled.div`
   justify-content: flex-start;
   font-size: 16px;
   font-weight: bold;
+  color: #fff;
+  margin-left: 125px;
 `;
 
 export const WrapperButtonMore = styled(ButtonComponent)`

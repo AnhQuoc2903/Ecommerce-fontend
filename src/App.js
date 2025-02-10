@@ -53,7 +53,12 @@ function App() {
 
   return (
     <div>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Routes>
           {routes.map((route) => {
             const Path = route.path;
