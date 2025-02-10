@@ -1,5 +1,5 @@
 import { Badge, Col, Popover } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   WrapperContentPopup,
   WrapperHeader,
@@ -14,15 +14,16 @@ import {
 } from "@ant-design/icons";
 import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import * as UserServices from "../../services/UserServices";
-import { useDispatch } from "react-redux";
 import { resetUser } from "../../redux/slides/userSlide";
 import Loading from "../LoadingComponent/Loading";
 
 const HeaderComponent = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch("");
+  const dispatch = useDispatch();
+  const [userName, setUserName] = useState("");
+  const [userAvatar, setUserAvatar] = useState("");
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user);
   const handleNavigateLogin = () => {
@@ -35,6 +36,13 @@ const HeaderComponent = () => {
     dispatch(resetUser());
     setLoading(false);
   };
+
+  useEffect(() => {
+    setLoading(true);
+    setUserName(user?.name);
+    setUserAvatar(user?.avatar);
+    setLoading(false);
+  }, [user?.name, user?.avatar]);
 
   const content = (
     <div>
@@ -81,21 +89,37 @@ const HeaderComponent = () => {
         >
           <Loading isPending={loading}>
             <WrapperHeaderAccunt>
-              <UserOutlined style={{ fontSize: "30px", marginLeft: "10px" }} />
-              {user?.name ? (
+              {userAvatar ? (
+                <img
+                  src={userAvatar}
+                  alt=""
+                  style={{
+                    height: "40px",
+                    width: "40px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <UserOutlined
+                  style={{ fontSize: "30px", marginLeft: "10px" }}
+                />
+              )}
+              {user?.access_token ? (
                 <>
                   <Popover content={content} trigger="click">
                     <div
                       style={{
                         cursor: "pointer",
                         marginTop: "5px",
-                        maxWidth: "150px",
+                        maxWidth: "110px",
+                        lineHeight: "30px",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                       }}
                     >
-                      {user?.name}
+                      {userName.length ? userName : user?.email}
                     </div>
                   </Popover>
                 </>
