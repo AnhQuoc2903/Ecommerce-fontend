@@ -9,7 +9,6 @@ import {
 } from "./style";
 import { StarFilled } from "@ant-design/icons";
 import logo from "../../assets/images/logo.png";
-import h4 from "../../assets/images/Slice6.jpg";
 import { WrapperStyleTextSell } from "../ProductDetailComponent/style";
 
 const CardComponent = (props) => {
@@ -34,7 +33,7 @@ const CardComponent = (props) => {
           body: { padding: "10px" },
         },
       }}
-      cover={<img alt="example" src={h4} />}
+      cover={<img alt="" src={image} />}
     >
       <WrapperImageStyle src={logo} />
       <StyledNameProduct>{name}</StyledNameProduct>
@@ -46,7 +45,7 @@ const CardComponent = (props) => {
         <WrapperStyleTextSell>| Da Ban {seller || 1000}+</WrapperStyleTextSell>
       </WrapperReportText>
       <WrapperPriceText>
-        <span style={{ marginRight: "8px" }}>{price}</span>
+        <span style={{ marginRight: "8px" }}>{price} đ</span>
         <WrapperDiscountText>{discount || 5}%</WrapperDiscountText>
       </WrapperPriceText>
     </WrapperCardStyle>

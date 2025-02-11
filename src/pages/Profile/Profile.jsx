@@ -43,7 +43,7 @@ const Profile = () => {
   }, [user?.access_token, navigate]);
 
   const dispatch = useDispatch();
-  const { isPending, isSuccess, isError } = mutation;
+  const { data, isPending, isSuccess, isError } = mutation;
 
   useEffect(() => {
     setEmail(user?.email);
@@ -69,13 +69,20 @@ const Profile = () => {
   // };
 
   useEffect(() => {
-    if (isSuccess) {
-      message.success("Thông tin đã được cập nhật!");
+    if (isSuccess && data?.status === "OK") {
+      message.success(data?.message);
       handleUpdateUser(user?.id, user?.access_token);
     } else if (isError) {
-      message.error("Cập nhật thất bại vui lòng xem lại định dạng!");
+      message.error(data?.message);
     }
-  }, [isSuccess, isError, handleUpdateUser, user?.id, user?.access_token]);
+  }, [
+    isSuccess,
+    isError,
+    handleUpdateUser,
+    user?.id,
+    user?.access_token,
+    data,
+  ]);
 
   const handleOnchangeName = (value) => {
     setName(value);
