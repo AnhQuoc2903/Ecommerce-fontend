@@ -28,4 +28,4 @@ const AdminProduct = () => {
   );
 };
 
-export default AdminProduct; // Đảm bảo có export default
+export default AdminProduct;
