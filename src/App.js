@@ -16,8 +16,21 @@ function App() {
 
   const handleGetDetailsUser = useCallback(
     async (id, token) => {
-      const res = await UserServices.getDetailsUser(id, token);
-      dispatch(updateUser({ ...res?.data, access_token: token }));
+      try {
+        const res = await UserServices.getDetailsUser(id, token);
+        if (res?.data) {
+          dispatch(updateUser({ ...res.data, access_token: token }));
+        } else {
+          console.error("User data not found!");
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        if (error.response?.status === 401) {
+          console.warn("Unauthorized! Token might be invalid or expired.");
+          localStorage.removeItem("access_token");
+          window.location.reload();
+        }
+      }
     },
     [dispatch]
   );
@@ -45,13 +58,27 @@ function App() {
     async (config) => {
       const currentTime = new Date();
       const { decoded } = handleDecoded();
+
       if (decoded?.exp < currentTime.getTime() / 1000) {
-        const data = await UserServices.refreshToken();
-        config.headers["token"] = `Bearer ${data?.access_token}`;
+        try {
+          const data = await UserServices.refreshToken();
+          if (!data?.access_token) {
+            throw new Error("No new access token received.");
+          }
+
+          config.headers["token"] = `Bearer ${data.access_token}`;
+        } catch (error) {
+          console.error("Failed to refresh token:", error);
+
+          localStorage.removeItem("access_token");
+          window.location.reload();
+          return Promise.reject(error);
+        }
       }
       return config;
     },
     (err) => {
+      console.error("Axios interceptor error:", err);
       return Promise.reject(err);
     }
   );
