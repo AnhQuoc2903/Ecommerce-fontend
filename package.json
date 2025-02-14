@@ -66,6 +66,6 @@
       "localhost",
       ".localhost"
     ],
-    "proxy": "https://localhost:3001"
+    "proxy": "https://ecommerce-backend-7-rllu.onrender.com"
   }
 }
