@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { WrapperHeader, WrapperInputAvatar } from "./style";
 import { Button, Form, message, Rate, Space, Upload } from "antd";
 import {
+  CloseOutlined,
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
@@ -14,7 +15,6 @@ import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../LoadingComponent/Loading";
 import { useQuery } from "@tanstack/react-query";
 import TableComponents from "../TableComponents/TableComponent";
-import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import { useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import ModalComponent from "../ModalComponent/ModalComponent";
@@ -22,11 +22,13 @@ import ModalComponent from "../ModalComponent/ModalComponent";
 const AdminProduct = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rowSelected, setRowSelected] = useState();
+  const [fileList, setFileList] = useState([]);
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
   const [isPendingUpdate, setIsPendingUpdate] = useState(false);
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
   const queryClient = useQueryClient();
+  const [expandedRows, setExpandedRows] = useState({});
   const [form] = Form.useForm();
   const searchInput = useRef(null);
 
@@ -37,7 +39,7 @@ const AdminProduct = () => {
     price: "",
     description: "",
     rating: "",
-    image: "",
+    images: [],
   });
 
   const [stateProductDetails, setStateProductDetails] = useState({
@@ -47,7 +49,7 @@ const AdminProduct = () => {
     price: "",
     description: "",
     rating: "",
-    image: "",
+    images: [],
   });
 
   const handleCancel = useCallback(() => {
@@ -59,7 +61,7 @@ const AdminProduct = () => {
       price: "",
       description: "",
       rating: "",
-      image: "",
+      images: [],
     });
     form.resetFields();
   }, [form]);
@@ -83,7 +85,7 @@ const AdminProduct = () => {
   };
 
   const mutation = useMutationHooks((data) => {
-    const { name, type, countInStock, price, description, rating, image } =
+    const { name, type, countInStock, price, description, rating, images } =
       data;
     return ProductServices.createProduct({
       name,
@@ -92,7 +94,7 @@ const AdminProduct = () => {
       price,
       description,
       rating,
-      image,
+      images,
     });
   });
 
@@ -159,7 +161,7 @@ const AdminProduct = () => {
         price: res?.data?.price,
         description: res?.data?.description,
         rating: res?.data?.rating,
-        image: res?.data?.image,
+        images: res?.data?.images || [],
       });
     }
     setIsPendingUpdate(false);
@@ -170,11 +172,11 @@ const AdminProduct = () => {
   }, [form, stateProductDetails]);
 
   useEffect(() => {
-    if (rowSelected) {
+    if (rowSelected && isOpenDrawer) {
       setIsPendingUpdate(true);
       fetchGetDetailsProduct(rowSelected);
     }
-  }, [rowSelected]);
+  }, [rowSelected, isOpenDrawer]);
 
   const handleDetailsProduct = () => {
     setIsOpenDrawer(true);
@@ -195,9 +197,10 @@ const AdminProduct = () => {
     );
   };
 
-  const handleSearch = (confirm) => {
+  const handleSearch = (selectedKeys, confirm) => {
     confirm();
   };
+
   const handleReset = (clearFilters) => {
     clearFilters();
   };
@@ -218,11 +221,11 @@ const AdminProduct = () => {
         <InputComponent
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
+          value={selectedKeys[0] || ""}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => handleSearch(selectedKeys, confirm)}
           style={{
             marginBottom: 8,
             display: "block",
@@ -231,7 +234,7 @@ const AdminProduct = () => {
         <Space>
           <Button
             type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch(selectedKeys, confirm)}
             icon={<SearchOutlined />}
             size="small"
             style={{
@@ -260,7 +263,12 @@ const AdminProduct = () => {
       />
     ),
     onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+      record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : false,
     filterDropdownProps: {
       onOpenChange(open) {
         if (open) {
@@ -281,7 +289,7 @@ const AdminProduct = () => {
       title: "Name",
       dataIndex: "name",
       render: (text) => <span>{text}</span>,
-      sorter: (a, b) => a.name.length - b.name.length,
+      sorter: (a, b) => (a.name?.length || 0) - (b.name?.length || 0),
       ...getColumnSearchProps("name"),
     },
     {
@@ -333,19 +341,88 @@ const AdminProduct = () => {
     },
     {
       title: "Image",
-      dataIndex: "image",
-      render: (image) => (
-        <img
-          src={image}
-          alt=""
-          style={{
-            width: "50px",
-            height: "50px",
-            objectFit: "cover",
-            borderRadius: "5px",
-          }}
-        />
-      ),
+      dataIndex: "images",
+      align: "center",
+      render: (images, record) => {
+        const isExpanded = expandedRows[record._id] || false;
+
+        return (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              {(isExpanded ? images : images.slice(0, 1)).map(
+                (image, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                      borderRadius: "8px",
+                      overflow: "hidden",
+                      boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
+                      transition: "transform 0.3s ease-in-out",
+                    }}
+                  >
+                    <img
+                      src={image}
+                      alt={`product-${index}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "transform 0.2s ease-in-out",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.transform = "scale(1.1)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.transform = "scale(1)")
+                      }
+                    />
+                  </div>
+                )
+              )}
+            </div>
+            {images.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedRows((prev) => ({
+                    ...prev,
+                    [record._id]: !isExpanded,
+                  }));
+                }}
+                style={{
+                  marginTop: "5px",
+                  background: "#007bff",
+                  border: "none",
+                  color: "white",
+                  cursor: "pointer",
+                  padding: "5px 10px",
+                  borderRadius: "5px",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  transition: "background 0.2s ease-in-out",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#0056b3")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "#007bff")
+                }
+              >
+                {isExpanded ? "Thu gọn" : "Xem thêm"}
+              </button>
+            )}
+          </div>
+        );
+      },
     },
 
     {
@@ -374,7 +451,7 @@ const AdminProduct = () => {
       price: "",
       description: "",
       rating: "",
-      image: "",
+      images: [],
     });
     form.resetFields();
   }, [form]);
@@ -479,63 +556,96 @@ const AdminProduct = () => {
     form.setFieldsValue({ [e.target.name]: e.target.value });
   };
 
-  const handleOnchangeAvatar = async ({ fileList }) => {
-    if (!fileList || fileList.length === 0) {
-      return;
-    }
+  const handleOnchangeAvatar = async ({ fileList: newFileList }) => {
+    let newImages = [];
 
-    const file = fileList[fileList.length - 1];
-    if (!file) return;
+    for (let file of newFileList) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File quá lớn! Vui lòng chọn file nhỏ hơn 10MB.");
+        continue;
+      }
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert("File quá lớn! Vui lòng chọn file nhỏ hơn 10MB.");
-      return;
-    }
+      let preview = file.url || file.preview;
+      if (!preview && file.originFileObj) {
+        try {
+          preview = await getBase64(file.originFileObj);
+        } catch (error) {
+          console.error("Lỗi khi chuyển file sang Base64:", error);
+          alert("Không thể hiển thị ảnh, vui lòng thử lại!");
+          continue;
+        }
+      }
 
-    let preview = file.url || file.preview;
-    if (!preview && file.originFileObj) {
-      try {
-        preview = await getBase64(file.originFileObj);
-      } catch (error) {
-        console.error("Lỗi khi chuyển file sang Base64:", error);
-        alert("Không thể hiển thị ảnh, vui lòng thử lại!");
-        return;
+      if (preview) {
+        newImages.push(preview);
       }
     }
-    setStateProduct({
-      ...stateProduct,
-      image: preview,
-    });
-    form.setFieldsValue({ image: preview });
+
+    setStateProduct((prevState) => ({
+      ...prevState,
+      images: [...newImages],
+    }));
+
+    form.setFieldsValue({ images: newImages });
+
+    setFileList([...newFileList]);
   };
 
-  const handleOnchangeAvatarDetail = async ({ fileList }) => {
-    if (!fileList || fileList.length === 0) {
-      return;
-    }
+  const handleOnchangeAvatarDetail = async ({ fileList: newFileList }) => {
+    let newImages = [];
 
-    const file = fileList[fileList.length - 1];
-    if (!file) return;
+    for (let file of newFileList) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File quá lớn! Vui lòng chọn file nhỏ hơn 10MB.");
+        continue;
+      }
 
-    if (file.size > 10 * 1024 * 1024) {
-      alert("File quá lớn! Vui lòng chọn file nhỏ hơn 10MB.");
-      return;
-    }
+      let preview = file.url || file.preview;
+      if (!preview && file.originFileObj) {
+        try {
+          preview = await getBase64(file.originFileObj);
+        } catch (error) {
+          console.error("Lỗi khi chuyển file sang Base64:", error);
+          alert("Không thể hiển thị ảnh, vui lòng thử lại!");
+          continue;
+        }
+      }
 
-    let preview = file.url || file.preview;
-    if (!preview && file.originFileObj) {
-      try {
-        preview = await getBase64(file.originFileObj);
-      } catch (error) {
-        alert("Không thể hiển thị ảnh, vui lòng thử lại!");
-        return;
+      if (preview) {
+        newImages.push(preview);
       }
     }
-    setStateProductDetails({
-      ...stateProductDetails,
-      image: preview,
-    });
-    form.setFieldsValue({ image: preview });
+
+    setStateProductDetails((prevState) => ({
+      ...prevState,
+      images: [...newImages],
+    }));
+
+    form.setFieldsValue({ images: newImages });
+
+    setFileList([...newFileList]);
+  };
+
+  const handleRemoveImage = (index) => {
+    const newImages = stateProduct.images.filter((_, i) => i !== index);
+
+    setStateProduct((prevState) => ({
+      ...prevState,
+      images: newImages,
+    }));
+    form.setFieldsValue({ images: newImages });
+    setFileList((prevList) => prevList.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveImageDetails = (index) => {
+    const newImages = stateProductDetails.images.filter((_, i) => i !== index);
+
+    setStateProductDetails((prevState) => ({
+      ...prevState,
+      images: newImages,
+    }));
+    form.setFieldsValue({ images: newImages });
+    setFileList((prevList) => prevList.filter((_, i) => i !== index));
   };
 
   return (
@@ -686,31 +796,66 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Image"
-              name="image"
-              rules={[{ required: true, message: "Please input your image!" }]}
+              label="Images"
+              name="images"
+              rules={[{ required: true, message: "Please input your images!" }]}
             >
-              <WrapperInputAvatar>
-                {stateProduct?.image && (
-                  <img
-                    src={stateProduct?.image}
-                    alt=""
-                    style={{
-                      height: "80px",
-                      width: "80px",
-                      objectFit: "cover",
-                      border: "2px solid #1A94FF",
-                      marginLeft: "10px",
-                    }}
-                  />
+              <WrapperInputAvatar
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "10px",
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                }}
+              >
+                {Array.isArray(stateProduct?.images) &&
+                  stateProduct.images.map((img, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        position: "relative",
+                        display: "inline-block",
+                        height: "80px",
+                        width: "80px",
+                      }}
+                    >
+                      <img
+                        src={img}
+                        alt="product"
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          objectFit: "cover",
+                          border: "2px solid #1A94FF",
+                          borderRadius: "5px",
+                        }}
+                      />
+                      <Button
+                        type="text"
+                        icon={<CloseOutlined style={{ color: "red" }} />}
+                        onClick={() => handleRemoveImage(index)}
+                        style={{
+                          position: "absolute",
+                          top: "-10px",
+                          right: "-10px",
+                          borderRadius: "50%",
+                        }}
+                      />
+                    </div>
+                  ))}
+                {stateProduct.images.length < 5 && (
+                  <Upload
+                    onChange={handleOnchangeAvatar}
+                    showUploadList={false}
+                    multiple
+                    fileList={fileList}
+                  >
+                    <Button style={{ height: "80px", width: "80px" }}>
+                      <PlusOutlined />
+                    </Button>
+                  </Upload>
                 )}
-                <Upload
-                  onChange={handleOnchangeAvatar}
-                  showUploadList={false}
-                  maxCount={5}
-                >
-                  <Button>Chọn ảnh</Button>
-                </Upload>
               </WrapperInputAvatar>
             </Form.Item>
 
@@ -722,9 +867,10 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </ModalComponent>
-      <DrawerComponent
+      <ModalComponent
         title="Chi tiết sản phẩm"
         isOpen={isOpenDrawer}
+        footer={null}
         onClose={() => setIsOpenDrawer(false)}
         onCancel={handleCloseDrawer}
       >
@@ -847,31 +993,66 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
-              label="Image"
-              name="image"
-              rules={[{ required: true, message: "Please input your image!" }]}
+              label="Images"
+              name="images"
+              rules={[{ required: true, message: "Please input your images!" }]}
             >
-              <WrapperInputAvatar>
-                {stateProductDetails?.image && (
-                  <img
-                    src={stateProductDetails?.image}
-                    alt=""
-                    style={{
-                      height: "80px",
-                      width: "80px",
-                      objectFit: "cover",
-                      border: "2px solid #1A94FF",
-                      marginLeft: "10px",
-                    }}
-                  />
+              <WrapperInputAvatar
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "10px",
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                }}
+              >
+                {Array.isArray(stateProductDetails?.images) &&
+                  stateProductDetails?.images.map((img, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        position: "relative",
+                        display: "inline-block",
+                        height: "80px",
+                        width: "80px",
+                      }}
+                    >
+                      <img
+                        src={img}
+                        alt="product"
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          objectFit: "cover",
+                          border: "2px solid #1A94FF",
+                          borderRadius: "5px",
+                        }}
+                      />
+                      <Button
+                        type="text"
+                        icon={<CloseOutlined style={{ color: "red" }} />}
+                        onClick={() => handleRemoveImageDetails(index)}
+                        style={{
+                          position: "absolute",
+                          top: "-10px",
+                          right: "-10px",
+                          borderRadius: "50%",
+                        }}
+                      />
+                    </div>
+                  ))}
+                {stateProductDetails?.images.length < 5 && (
+                  <Upload
+                    onChange={handleOnchangeAvatarDetail}
+                    showUploadList={false}
+                    multiple
+                    fileList={fileList}
+                  >
+                    <Button style={{ height: "80px", width: "80px" }}>
+                      <PlusOutlined />
+                    </Button>
+                  </Upload>
                 )}
-                <Upload
-                  onChange={handleOnchangeAvatarDetail}
-                  showUploadList={false}
-                  maxCount={5}
-                >
-                  <Button>Chọn ảnh</Button>
-                </Upload>
               </WrapperInputAvatar>
             </Form.Item>
 
@@ -882,7 +1063,7 @@ const AdminProduct = () => {
             </Form.Item>
           </Form>
         </Loading>
-      </DrawerComponent>
+      </ModalComponent>
       <ModalComponent
         title="Xóa sản phẩm"
         open={isModalOpenDelete}

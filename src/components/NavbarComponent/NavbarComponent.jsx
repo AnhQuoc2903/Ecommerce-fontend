@@ -1,7 +1,11 @@
 import React from "react";
-import { WrapperContent, WrapperLableText, WrapperTextValue, WrapperTextPrice } from "./style";
+import {
+  WrapperContent,
+  WrapperLableText,
+  WrapperTextValue,
+  WrapperTextPrice,
+} from "./style";
 import { Checkbox, Rate } from "antd";
-
 
 const NavbarComponent = () => {
   const onChange = () => {};
@@ -45,9 +49,7 @@ const NavbarComponent = () => {
         });
       case "price":
         return options.map((option) => {
-          return (
-              <WrapperTextPrice>{option}</WrapperTextPrice>
-          );
+          return <WrapperTextPrice>{option}</WrapperTextPrice>;
         });
       default:
         return {};
@@ -60,16 +62,6 @@ const NavbarComponent = () => {
       <WrapperContent>
         {renderContent("text", ["Tu lanh", "TV", "MAYGIAT"])}
       </WrapperContent>
-      {/* <WrapperContent>
-        {renderContent("checkbox", [
-          { value: "a", label: "A" },
-          { value: "b", label: "B" },
-        ])}
-      </WrapperContent>
-      <WrapperContent>{renderContent("star", [1, 2, 3, 4, 5])}</WrapperContent>
-      <WrapperContent>
-        {renderContent("price", ["duoi 40000", "tren 50000"])}
-      </WrapperContent> */}
     </div>
   );
 };

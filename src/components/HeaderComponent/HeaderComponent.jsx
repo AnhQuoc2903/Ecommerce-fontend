@@ -1,10 +1,9 @@
-import { Badge, Col, Popover } from "antd";
+import { Badge, Col, Image, Popover, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   WrapperContentPopup,
   WrapperHeader,
   WrapperHeaderAccunt,
-  WrapperTextHeader,
   WrapperTextHeaderSmall,
 } from "./style";
 import {
@@ -18,6 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import * as UserServices from "../../services/UserServices";
 import { resetUser } from "../../redux/slides/userSlide";
 import Loading from "../LoadingComponent/Loading";
+import logobap from "../../assets/images/logovap.jpg";
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate();
@@ -76,14 +76,18 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         }}
       >
         <Col span={5}>
-          <WrapperTextHeader
-            onClick={() => navigate("/")}
-            style={{
-              cursor: "pointer",
-            }}
-          >
-            ECO WARRIORS
-          </WrapperTextHeader>
+          <Tooltip title="Trang chủ">
+            <div onClick={() => navigate("/")}>
+              <Image
+                preview={false}
+                alt="Logo"
+                src={logobap}
+                width={70}
+                height={70}
+                style={{ borderRadius: "50%" }}
+              />
+            </div>
+          </Tooltip>
         </Col>
         {!isHiddenSearch && (
           <Col span={13}>

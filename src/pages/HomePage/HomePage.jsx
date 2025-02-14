@@ -73,7 +73,7 @@ const HomePage = () => {
                     key={product?._id}
                     countInStock={product?.countInStock}
                     description={product?.description}
-                    image={product?.image}
+                    images={product?.images[0]}
                     name={product?.name}
                     price={product?.price}
                     rating={product?.rating}

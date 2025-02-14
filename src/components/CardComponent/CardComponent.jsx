@@ -12,17 +12,7 @@ import logo from "../../assets/images/logo.png";
 import { WrapperStyleTextSell } from "../ProductDetailComponent/style";
 
 const CardComponent = (props) => {
-  const {
-    countInStock,
-    description,
-    image,
-    name,
-    price,
-    rating,
-    type,
-    discount,
-    seller,
-  } = props;
+  const { images, name, price, rating, discount, seller } = props;
 
   return (
     <WrapperCardStyle
@@ -33,7 +23,7 @@ const CardComponent = (props) => {
           body: { padding: "10px" },
         },
       }}
-      cover={<img alt="" src={image} />}
+      cover={<img alt="" src={images} />}
     >
       <WrapperImageStyle src={logo} />
       <StyledNameProduct>{name}</StyledNameProduct>

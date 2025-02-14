@@ -10,13 +10,6 @@ export const WrapperHeader = styled(Row)`
   padding: 10px 0;
 `;
 
-export const WrapperTextHeader = styled.span`
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-  text-align: left;
-`;
-
 export const WrapperHeaderAccunt = styled.div`
   display: flex;
   align-item: center;
