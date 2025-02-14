@@ -27,6 +27,7 @@ const AdminProduct = () => {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
   const queryClient = useQueryClient();
+  const [form] = Form.useForm();
   const searchInput = useRef(null);
 
   const [stateProduct, setStateProduct] = useState({
@@ -48,8 +49,6 @@ const AdminProduct = () => {
     rating: "",
     image: "",
   });
-
-  const [form] = Form.useForm();
 
   const handleCancel = useCallback(() => {
     setIsModalOpen(false);
@@ -109,6 +108,12 @@ const AdminProduct = () => {
     return res;
   });
 
+  const mutationDeleteMany = useMutationHooks((data) => {
+    const { token, ...ids } = data;
+    const res = ProductServices.deleteManyProduct(ids, token);
+    return res;
+  });
+
   const getAllProducts = async () => {
     const res = await ProductServices.getAllProduct();
     return res;
@@ -129,6 +134,13 @@ const AdminProduct = () => {
     isSuccess: isSuccessDeleted,
     isError: isErrorDeleted,
   } = mutationDelete;
+
+  const {
+    data: dataDeletedMany,
+    isPending: isPendingDeletedMany,
+    isSuccess: isSuccessDeletedMany,
+    isError: isErrorDeletedMany,
+  } = mutationDeleteMany;
 
   const queryProduct = useQuery({
     queryKey: ["products"],
@@ -256,20 +268,6 @@ const AdminProduct = () => {
         }
       },
     },
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{
-    //         backgroundColor: "#ffc069",
-    //         padding: 0,
-    //       }}
-    //       searchWords={[searchText]}
-    //       autoEscape
-    //       textToHighlight={text ? text.toString() : ""}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
   });
 
   const columns = [
@@ -417,6 +415,17 @@ const AdminProduct = () => {
     }
   }, [isSuccessDeleted, isErrorDeleted, dataDeleted, queryClient]);
 
+  useEffect(() => {
+    if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
+      message.success(dataDeletedMany?.message);
+      queryClient.invalidateQueries(["products"]);
+    } else if (isErrorDeletedMany) {
+      message.error(
+        dataDeletedMany?.message || "Có lỗi xảy ra, vui lòng thử lại"
+      );
+    }
+  }, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany, queryClient]);
+
   const onFinish = () => {
     mutation.mutate(stateProduct, {
       onSettled: () => {
@@ -431,6 +440,20 @@ const AdminProduct = () => {
         id: rowSelected,
         token: user?.access_token,
         ...stateProductDetails,
+      },
+      {
+        onSettled: () => {
+          queryProduct.refetch();
+        },
+      }
+    );
+  };
+
+  const handleDeleteManyProducts = (ids) => {
+    mutationDeleteMany.mutate(
+      {
+        ids: ids,
+        token: user?.access_token,
       },
       {
         onSettled: () => {
@@ -533,8 +556,9 @@ const AdminProduct = () => {
       </div>
       <div style={{ marginTop: "20px" }}>
         <TableComponents
+          handleDeleteManyProducts={handleDeleteManyProducts}
           columns={columns}
-          isPending={isPendingProducts}
+          isPending={isPendingProducts || isPendingDeletedMany}
           data={dataTable}
           onRow={(record) => {
             return {

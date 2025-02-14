@@ -10,7 +10,7 @@ import { updateUser } from "./redux/slides/userSlide";
 import Loading from "./components/LoadingComponent/Loading";
 
 function App() {
-  const dispatch = useDispatch("");
+  const dispatch = useDispatch();
   const [isPending, setIsPending] = useState(false);
   const user = useSelector((state) => state.user);
 

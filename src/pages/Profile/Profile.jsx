@@ -17,11 +17,10 @@ import { updateUser } from "../../redux/slides/userSlide";
 import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "../../utils";
 import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { Option } = Select;
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -36,13 +35,6 @@ const Profile = () => {
     return UserServices.updateUser(id, rests, access_token);
   });
 
-  useEffect(() => {
-    if (!user?.access_token) {
-      navigate("/");
-    }
-  }, [user?.access_token, navigate]);
-
-  const dispatch = useDispatch();
   const { data, isPending, isSuccess, isError } = mutation;
 
   useEffect(() => {
@@ -215,6 +207,7 @@ const Profile = () => {
               value={name}
               placeholder="Nhập tên"
               onChange={handleOnchangeName}
+              disabled={user?.isAdmin}
               style={{
                 width: "100%",
                 borderRadius: "8px",
