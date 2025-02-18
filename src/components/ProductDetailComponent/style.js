@@ -21,9 +21,9 @@ export const WrapperStyleNameProduct = styled.h1`
 `;
 
 export const WrapperStyleTextSell = styled.span`
-  font-size: 15px;
+  font-size: 14px;
   line-height: 24px;
-  color: rgb(120, 120, 120);
+  color: #666;
 `;
 
 export const WrapperPriceProduct = styled.div`

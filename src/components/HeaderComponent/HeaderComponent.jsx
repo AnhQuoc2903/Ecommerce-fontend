@@ -18,6 +18,7 @@ import * as UserServices from "../../services/UserServices";
 import { resetUser } from "../../redux/slides/userSlide";
 import Loading from "../LoadingComponent/Loading";
 import logobap from "../../assets/images/logovap.jpg";
+import { searchProduct } from "../../redux/slides/productSlide";
 
 const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
   const user = useSelector((state) => state.user);
   const handleNavigateLogin = () => {
     navigate("/sign-in");
@@ -59,6 +61,12 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       </WrapperContentPopup>
     </div>
   );
+
+  const onSearch = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    dispatch(searchProduct(value));
+  };
 
   return (
     <div
@@ -96,6 +104,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               bordered={false}
               textButton="Tim Kiem"
               placeholder="Input search text"
+              onChange={onSearch}
             />
           </Col>
         )}

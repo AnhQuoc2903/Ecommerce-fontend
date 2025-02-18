@@ -1,10 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { WrapperHeader, WrapperInputAvatar } from "./style";
-import { Button, Form, message, Rate, Space, Upload } from "antd";
+import {
+  Alert,
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  Rate,
+  Row,
+  Space,
+  Upload,
+} from "antd";
 import {
   CloseOutlined,
   DeleteOutlined,
   EditOutlined,
+  ExclamationCircleOutlined,
   PlusOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
@@ -581,14 +593,18 @@ const AdminProduct = () => {
       }
     }
 
-    setStateProduct((prevState) => ({
-      ...prevState,
-      images: [...newImages],
-    }));
+    setStateProduct((prevState) => {
+      const updatedImages = [...new Set([...prevState.images, ...newImages])];
 
-    form.setFieldsValue({ images: newImages });
+      form.setFieldsValue({ images: updatedImages });
 
-    setFileList([...newFileList]);
+      return {
+        ...prevState,
+        images: updatedImages,
+      };
+    });
+
+    setFileList(newFileList);
   };
 
   const handleOnchangeAvatarDetail = async ({ fileList: newFileList }) => {
@@ -616,52 +632,73 @@ const AdminProduct = () => {
       }
     }
 
-    setStateProductDetails((prevState) => ({
-      ...prevState,
-      images: [...newImages],
-    }));
+    setStateProductDetails((prevState) => {
+      const updatedImages = [...new Set([...prevState.images, ...newImages])];
 
-    form.setFieldsValue({ images: newImages });
+      form.setFieldsValue({ images: updatedImages });
 
-    setFileList([...newFileList]);
+      return {
+        ...prevState,
+        images: updatedImages,
+      };
+    });
+
+    setFileList(newFileList);
   };
 
   const handleRemoveImage = (index) => {
-    const newImages = stateProduct.images.filter((_, i) => i !== index);
+    setStateProduct((prevState) => {
+      const newImages = prevState.images.filter((_, i) => i !== index);
 
-    setStateProduct((prevState) => ({
-      ...prevState,
-      images: newImages,
-    }));
-    form.setFieldsValue({ images: newImages });
+      form.setFieldsValue({ images: newImages });
+
+      return {
+        ...prevState,
+        images: newImages,
+      };
+    });
+
     setFileList((prevList) => prevList.filter((_, i) => i !== index));
   };
 
   const handleRemoveImageDetails = (index) => {
-    const newImages = stateProductDetails.images.filter((_, i) => i !== index);
+    setStateProductDetails((prevState) => {
+      const newImages = prevState.images.filter((_, i) => i !== index);
 
-    setStateProductDetails((prevState) => ({
-      ...prevState,
-      images: newImages,
-    }));
-    form.setFieldsValue({ images: newImages });
+      form.setFieldsValue({ images: newImages });
+
+      return {
+        ...prevState,
+        images: newImages,
+      };
+    });
     setFileList((prevList) => prevList.filter((_, i) => i !== index));
   };
 
   return (
     <div>
       <WrapperHeader>Quản lý Sản Phẩm</WrapperHeader>
-      <div style={{ marginTop: "10px" }}>
+      <div style={{ marginTop: "20px" }}>
         <Button
           style={{
-            height: "100px",
-            width: "100px",
-            borderRadius: "6px",
+            height: "50px",
+            width: "50px",
+            borderRadius: "12px",
             borderStyle: "dashed",
+            borderColor: "#1890ff",
+            backgroundColor: "#f0f7ff",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+            transition: "all 0.3s ease-in-out",
           }}
           onClick={() => setIsModalOpen(true)}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#e6f7ff")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#f0f7ff")
+          }
         >
-          <PlusOutlined style={{ fontSize: "60px" }} />
+          <PlusOutlined style={{ fontSize: "20px", color: "#1890ff" }} />
         </Button>
       </div>
       <div style={{ marginTop: "20px" }}>
@@ -685,128 +722,143 @@ const AdminProduct = () => {
         okButtonProps={{ style: { display: "none" } }}
         onCancel={handleCancel}
         footer={null}
+        centered
+        width={600}
       >
         <Loading isPending={isPending}>
           <Form
             form={form}
             name="productFormCreate"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
-            style={{ maxWidth: 600 }}
+            layout="vertical"
+            style={{ maxWidth: 600, margin: "0 auto" }}
             onFinish={onFinish}
             autoComplete="off"
           >
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: true, message: "Please input your name!" }]}
-            >
-              <InputComponent
-                value={stateProduct.name}
-                onChange={handleOnChange}
-                name="name"
+            {data?.status === "ERR" && (
+              <Alert
+                message={data?.message}
+                type="error"
+                showIcon
+                style={{ marginBottom: "15px" }}
               />
-            </Form.Item>
+            )}
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Tên sản phẩm"
+                  name="name"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập tên sản phẩm!" },
+                  ]}
+                >
+                  <InputComponent
+                    value={stateProduct.name}
+                    onChange={handleOnChange}
+                    name="name"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Loại sản phẩm"
+                  name="type"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập loại sản phẩm!" },
+                  ]}
+                >
+                  <InputComponent
+                    value={stateProduct.type}
+                    onChange={handleOnChange}
+                    name="type"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Số lượng tồn kho"
+                  name="countInStock"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số lượng tồn kho!",
+                    },
+                  ]}
+                >
+                  <InputComponent
+                    value={stateProduct.countInStock}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      if (/^\d*$/.test(value)) {
+                        setStateProduct({
+                          ...stateProduct,
+                          countInStock: value,
+                        });
+                        form.setFieldsValue({ countInStock: value });
+                      }
+                    }}
+                    name="countInStock"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Giá sản phẩm"
+                  name="price"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập giá sản phẩm!" },
+                  ]}
+                >
+                  <InputComponent
+                    value={stateProduct.price}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (/^\d*$/.test(value)) {
+                        setStateProduct({ ...stateProduct, price: value });
+                        form.setFieldsValue({ price: value });
+                      }
+                    }}
+                    name="price"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Form.Item
-              label="Type"
-              name="type"
-              rules={[{ required: true, message: "Please input your type!" }]}
-            >
-              <InputComponent
-                value={stateProduct.type}
-                onChange={handleOnChange}
-                name="type"
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Count inStock"
-              name="countInStock"
-              rules={[
-                { required: true, message: "Please input your count inStock!" },
-              ]}
-            >
-              <InputComponent
-                value={stateProduct.countInStock}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "");
-                  if (/^\d*\.?\d*$/.test(value)) {
-                    setStateProduct({ ...stateProduct, countInStock: value });
-                    form.setFieldsValue({ countInStock: value });
-                  }
-                }}
-                name="countInStock"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Price"
-              name="price"
-              rules={[{ required: true, message: "Please input your price!" }]}
-            >
-              <InputComponent
-                value={stateProduct.price}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, "");
-                  if (/^\d*\.?\d*$/.test(value)) {
-                    setStateProduct({ ...stateProduct, price: value });
-                    form.setFieldsValue({ price: value });
-                  }
-                }}
-                name="price"
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Description"
-              name="description"
-              rules={[
-                { required: true, message: "Please input your description!" },
-              ]}
-            >
-              <InputComponent
-                value={stateProduct.description}
-                onChange={handleOnChange}
-                name="description"
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Rating"
+              label="Đánh giá"
               name="rating"
-              rules={[
-                { required: true, message: "Please input your rating!" },
-                {
-                  pattern: /^(?:[1-4](?:\.\d{1,2})?|5(?:\.0{1,2})?)$/,
-                  message: "Rating phải từ 1 tới 5 !",
-                },
-              ]}
+              rules={[{ required: true, message: "Vui lòng nhập đánh giá!" }]}
             >
-              <InputComponent
+              <Rate
+                allowHalf
                 value={stateProduct.rating}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, "");
-                  if (/^\d*\.?\d*$/.test(value)) {
-                    setStateProduct({ ...stateProduct, rating: value });
-                    form.setFieldsValue({ rating: value });
-                  }
+                onChange={(value) => {
+                  setStateProduct({ ...stateProduct, rating: value });
+                  form.setFieldsValue({ rating: value });
                 }}
-                name="rating"
               />
             </Form.Item>
 
             <Form.Item
-              label="Images"
+              label="Hình ảnh"
               name="images"
-              rules={[{ required: true, message: "Please input your images!" }]}
+              rules={[{ required: true, message: "Vui lòng thêm hình ảnh!" }]}
             >
               <WrapperInputAvatar
                 style={{
                   display: "flex",
                   flexWrap: "wrap",
                   gap: "10px",
-                  maxHeight: "200px",
+                  maxHeight: "220px",
                   overflowY: "auto",
+                  padding: "10px",
+                  border: "1px dashed #1890ff",
+                  borderRadius: "5px",
+                  backgroundColor: "#f9f9f9",
                 }}
               >
                 {Array.isArray(stateProduct?.images) &&
@@ -818,6 +870,8 @@ const AdminProduct = () => {
                         display: "inline-block",
                         height: "80px",
                         width: "80px",
+                        borderRadius: "8px",
+                        overflow: "hidden",
                       }}
                     >
                       <img
@@ -827,9 +881,16 @@ const AdminProduct = () => {
                           height: "100%",
                           width: "100%",
                           objectFit: "cover",
-                          border: "2px solid #1A94FF",
-                          borderRadius: "5px",
+                          borderRadius: "8px",
+                          border: "1px solid #ddd",
+                          transition: "transform 0.3s",
                         }}
+                        onMouseOver={(e) =>
+                          (e.target.style.transform = "scale(1.1)")
+                        }
+                        onMouseOut={(e) =>
+                          (e.target.style.transform = "scale(1)")
+                        }
                       />
                       <Button
                         type="text"
@@ -837,9 +898,11 @@ const AdminProduct = () => {
                         onClick={() => handleRemoveImage(index)}
                         style={{
                           position: "absolute",
-                          top: "-10px",
-                          right: "-10px",
+                          top: "-8px",
+                          right: "-8px",
+                          backgroundColor: "#fff",
                           borderRadius: "50%",
+                          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
                         }}
                       />
                     </div>
@@ -851,17 +914,50 @@ const AdminProduct = () => {
                     multiple
                     fileList={fileList}
                   >
-                    <Button style={{ height: "80px", width: "80px" }}>
-                      <PlusOutlined />
+                    <Button
+                      style={{
+                        height: "80px",
+                        width: "80px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px dashed #1890ff",
+                        borderRadius: "8px",
+                        backgroundColor: "#fafafa",
+                      }}
+                    >
+                      <PlusOutlined
+                        style={{ fontSize: "24px", color: "#1890ff" }}
+                      />
                     </Button>
                   </Upload>
                 )}
               </WrapperInputAvatar>
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                Submit
+            <Form.Item
+              label="Mô tả sản phẩm"
+              name="description"
+              labelCol={{ span: 6 }}
+              rules={[
+                { required: true, message: "Vui lòng nhập mô tả sản phẩm!" },
+              ]}
+            >
+              <Input.TextArea
+                value={stateProduct.description}
+                onChange={handleOnChange}
+                name="description"
+                rows={4}
+              />
+            </Form.Item>
+
+            <Form.Item style={{ textAlign: "center", marginTop: "20px" }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ width: "160px", height: "45px", fontSize: "16px" }}
+              >
+                Tạo sản phẩm
               </Button>
             </Form.Item>
           </Form>
@@ -873,122 +969,122 @@ const AdminProduct = () => {
         footer={null}
         onClose={() => setIsOpenDrawer(false)}
         onCancel={handleCloseDrawer}
+        width={600}
+        style={{ marginTop: "-90px" }}
       >
         <Loading isPending={isPendingUpdate || isPendingUpdated}>
           <Form
             form={form}
             name="productFormEdit"
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
-            style={{ maxWidth: 600 }}
+            layout="vertical"
+            style={{ maxWidth: 600, margin: "0 auto" }}
             onFinish={onUpdateProduct}
             autoComplete="off"
           >
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[{ required: true, message: "Please input your name!" }]}
-            >
-              <InputComponent
-                value={stateProductDetails.name}
-                onChange={handleOnChangeDetails}
-                name="name"
-              />
-            </Form.Item>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Name"
+                  name="name"
+                  rules={[
+                    { required: true, message: "Please input your name!" },
+                  ]}
+                >
+                  <InputComponent
+                    value={stateProductDetails.name}
+                    onChange={handleOnChangeDetails}
+                    name="name"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Type"
+                  name="type"
+                  rules={[
+                    { required: true, message: "Please input your type!" },
+                  ]}
+                >
+                  <InputComponent
+                    value={stateProductDetails.type}
+                    onChange={handleOnChangeDetails}
+                    name="type"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Count inStock"
+                  name="countInStock"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your count inStock!",
+                    },
+                  ]}
+                >
+                  <InputComponent
+                    value={stateProductDetails.countInStock}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setStateProductDetails({
+                          ...stateProductDetails,
+                          countInStock: value,
+                        });
+                        form.setFieldsValue({ countInStock: value });
+                      }
+                    }}
+                    name="countInStock"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Price"
+                  name="price"
+                  rules={[
+                    { required: true, message: "Please input your price!" },
+                  ]}
+                >
+                  <InputComponent
+                    value={stateProductDetails.price}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setStateProductDetails({
+                          ...stateProductDetails,
+                          price: value,
+                        });
+                        form.setFieldsValue({ price: value });
+                      }
+                    }}
+                    name="price"
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Form.Item
-              label="Type"
-              name="type"
-              rules={[{ required: true, message: "Please input your type!" }]}
-            >
-              <InputComponent
-                value={stateProductDetails.type}
-                onChange={handleOnChangeDetails}
-                name="type"
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Count inStock"
-              name="countInStock"
-              rules={[
-                { required: true, message: "Please input your count inStock!" },
-              ]}
-            >
-              <InputComponent
-                value={stateProductDetails.countInStock}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "");
-                  if (/^\d*\.?\d*$/.test(value)) {
-                    setStateProductDetails({
-                      ...stateProductDetails,
-                      countInStock: value,
-                    });
-                    form.setFieldsValue({ countInStock: value });
-                  }
-                }}
-                name="countInStock"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Price"
-              name="price"
-              rules={[{ required: true, message: "Please input your price!" }]}
-            >
-              <InputComponent
-                value={stateProductDetails.price}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, "");
-                  if (/^\d*\.?\d*$/.test(value)) {
-                    setStateProductDetails({
-                      ...stateProductDetails,
-                      price: value,
-                    });
-                    form.setFieldsValue({ price: value });
-                  }
-                }}
-                name="price"
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Description"
-              name="description"
-              rules={[
-                { required: true, message: "Please input your description!" },
-              ]}
-            >
-              <InputComponent
-                value={stateProductDetails.description}
-                onChange={handleOnChangeDetails}
-                name="description"
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Rating"
+              label="Đánh giá"
               name="rating"
-              rules={[
-                { required: true, message: "Please input your rating!" },
-                {
-                  pattern: /^(?:[1-4](?:\.\d{1,2})?|5(?:\.0{1,2})?)$/,
-                  message: "Rating phải từ 1 tới 5 !",
-                },
-              ]}
+              rules={[{ required: true, message: "Vui lòng nhập đánh giá!" }]}
             >
-              <InputComponent
+              <Rate
+                allowHalf
                 value={stateProductDetails.rating}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, "");
-                  if (/^\d*\.?\d*$/.test(value)) {
-                    setStateProductDetails({
-                      ...stateProductDetails,
-                      rating: value,
-                    });
-                    form.setFieldsValue({ rating: value });
-                  }
+                onChange={(value) => {
+                  setStateProductDetails({
+                    ...stateProductDetails,
+                    rating: value,
+                  });
+                  form.setFieldsValue({ rating: value });
                 }}
-                name="rating"
               />
             </Form.Item>
 
@@ -1002,8 +1098,12 @@ const AdminProduct = () => {
                   display: "flex",
                   flexWrap: "wrap",
                   gap: "10px",
-                  maxHeight: "200px",
+                  maxHeight: "220px",
                   overflowY: "auto",
+                  padding: "10px",
+                  border: "1px dashed #1890ff",
+                  borderRadius: "5px",
+                  backgroundColor: "#f9f9f9",
                 }}
               >
                 {Array.isArray(stateProductDetails?.images) &&
@@ -1015,6 +1115,8 @@ const AdminProduct = () => {
                         display: "inline-block",
                         height: "80px",
                         width: "80px",
+                        borderRadius: "8px",
+                        overflow: "hidden",
                       }}
                     >
                       <img
@@ -1024,19 +1126,29 @@ const AdminProduct = () => {
                           height: "100%",
                           width: "100%",
                           objectFit: "cover",
-                          border: "2px solid #1A94FF",
-                          borderRadius: "5px",
+                          borderRadius: "8px",
+                          border: "1px solid #ddd",
+                          transition: "transform 0.3s",
                         }}
+                        onMouseOver={(e) =>
+                          (e.target.style.transform = "scale(1.1)")
+                        }
+                        onMouseOut={(e) =>
+                          (e.target.style.transform = "scale(1)")
+                        }
                       />
+
                       <Button
                         type="text"
                         icon={<CloseOutlined style={{ color: "red" }} />}
                         onClick={() => handleRemoveImageDetails(index)}
                         style={{
                           position: "absolute",
-                          top: "-10px",
-                          right: "-10px",
+                          top: "-8px",
+                          right: "-8px",
+                          backgroundColor: "#fff",
                           borderRadius: "50%",
+                          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
                         }}
                       />
                     </div>
@@ -1048,32 +1160,119 @@ const AdminProduct = () => {
                     multiple
                     fileList={fileList}
                   >
-                    <Button style={{ height: "80px", width: "80px" }}>
-                      <PlusOutlined />
+                    <Button
+                      style={{
+                        height: "80px",
+                        width: "80px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px dashed #1890ff",
+                        borderRadius: "8px",
+                        backgroundColor: "#fafafa",
+                      }}
+                    >
+                      <PlusOutlined
+                        style={{ fontSize: "24px", color: "#1890ff" }}
+                      />
                     </Button>
                   </Upload>
                 )}
               </WrapperInputAvatar>
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                Apply
+            <Form.Item
+              label="Mô tả sản phẩm"
+              name="description"
+              labelCol={{ span: 6 }}
+              rules={[
+                { required: true, message: "Vui lòng nhập mô tả sản phẩm!" },
+              ]}
+            >
+              <Input.TextArea
+                value={stateProductDetails.description}
+                onChange={handleOnChangeDetails}
+                name="description"
+                rows={4}
+              />
+            </Form.Item>
+
+            <Form.Item style={{ textAlign: "center", marginTop: "20px" }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ width: "160px", height: "45px", fontSize: "16px" }}
+              >
+                Áp dụng
               </Button>
             </Form.Item>
           </Form>
         </Loading>
       </ModalComponent>
       <ModalComponent
-        title="Xóa sản phẩm"
+        style={{ marginTop: "140px" }}
+        title={
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+            }}
+          >
+            <ExclamationCircleOutlined
+              style={{ color: "#ff4d4f", fontSize: "18px" }}
+            />
+            <span style={{ fontSize: "18px", fontWeight: "bold" }}>
+              Xóa sản phẩm
+            </span>
+          </div>
+        }
         open={isModalOpenDelete}
         onCancel={handleCancelDelete}
-        onOk={handleDeleteProduct}
-        okText="Delete"
-        cancelText="Cancel"
+        footer={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <button
+              onClick={handleCancelDelete}
+              style={{
+                border: "1px solid #d9d9d9",
+                backgroundColor: "white",
+                color: "#595959",
+                padding: "6px 16px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Hủy
+            </button>
+            <button
+              onClick={handleDeleteProduct}
+              style={{
+                backgroundColor: "#ff4d4f",
+                border: "none",
+                color: "white",
+                padding: "6px 16px",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Xóa
+            </button>
+          </div>
+        }
       >
         <Loading isPending={isPendingDeleted}>
-          <div>Bạn có chắc muốn xóa sản phẩm này không!</div>
+          <div style={{ textAlign: "center", color: "#595959" }}>
+            <p style={{ fontSize: "16px", fontWeight: "500" }}>
+              Bạn có chắc chắn muốn xóa sản phẩm này không?
+            </p>
+          </div>
         </Loading>
       </ModalComponent>
     </div>

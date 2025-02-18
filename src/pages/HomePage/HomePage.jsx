@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import {
   WrapperButtonMore,
@@ -13,20 +13,34 @@ import CardComponent from "../../components/CardComponent/CardComponent";
 import { useQuery } from "@tanstack/react-query";
 import * as ProductServices from "../../services/ProductServices";
 import Loading from "../../components/LoadingComponent/Loading";
+import { useSelector } from "react-redux";
+import { useDebounce } from "../../hooks/useDebounce";
+import Banner from "../../components/Banner/Banner";
 
 const HomePage = () => {
+  const searchProduct = useSelector((state) => state?.product?.search);
+  const searchDebounce = useDebounce(searchProduct, 300);
+  const [limit, setLimit] = useState(10);
+  // const [page, setPage] = useState(10);
   const arr = ["TV", "Tu Lanh", "Lap Top"];
 
-  const fetchProductAll = async () => {
-    const res = await ProductServices.getAllProduct();
+  const fetchProductAll = async (context) => {
+    const limit = context?.queryKey && context?.queryKey[1];
+    const search = context?.queryKey && context?.queryKey[2];
+    const res = await ProductServices.getAllProduct(search, limit);
     return res;
   };
 
-  const { isPending, data: products } = useQuery({
-    queryKey: ["products"],
+  const {
+    isPending,
+    data: products,
+    isPreviousData,
+  } = useQuery({
+    queryKey: ["products", limit, searchDebounce],
     queryFn: fetchProductAll,
     retry: 3,
     retryDelay: 1000,
+    keepPreviousData: true,
   });
 
   return (
@@ -55,7 +69,6 @@ const HomePage = () => {
           className="body"
           style={{
             width: "100%",
-            backgroundColor: "#efefef",
             borderRadius: "10px",
           }}
         >
@@ -93,21 +106,33 @@ const HomePage = () => {
               }}
             >
               <WrapperButtonMore
-                textButton="Xem thêm"
+                textButton={isPreviousData ? "Load more" : "Xem thêm"}
                 type="outline"
                 style={{
                   border: "1px solid rgb(11,116,229)",
-                  color: "rgb(11,116,229)",
+                  color: `${products?.total === products?.data?.length ? "#ccc" : "rgb(11,116,229)"}`,
                   width: "240px",
                   height: "38px",
                   borderRadius: "4px",
                 }}
-                styleTextButton={{ fontWeight: "bold" }}
+                disabled={
+                  products?.total === products?.data?.length ||
+                  products?.totalPage === 1
+                }
+                styleTextButton={{
+                  fontWeight: "bold",
+                  color:
+                    products?.total === products?.data?.length
+                      ? "#fff"
+                      : "rgb(11,116,229)",
+                }}
+                onClick={() => setLimit((prev) => prev + 5)}
               />
             </div>
           </div>
         </div>
       </Loading>
+      <Banner />
     </>
   );
 };

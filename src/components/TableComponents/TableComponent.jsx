@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Button, Table } from "antd";
 import Loading from "../LoadingComponent/Loading";
 import { DeleteOutlined } from "@ant-design/icons";
+import { Excel } from "antd-table-saveas-excel";
+import { DownloadOutlined } from "@ant-design/icons";
 
 const TableComponent = (props) => {
   const {
     selectionType = "checkbox",
-    data = [],
+    data: dataSource = [],
     isPending = false,
     columns = [],
     handleDeleteManyProducts,
@@ -15,14 +17,21 @@ const TableComponent = (props) => {
 
   const [rowSelectedKeys, setRowSelectedKeys] = useState([]);
 
+  const newColumnExport = useMemo(() => {
+    return columns
+      ?.filter(
+        (col) =>
+          col.dataIndex !== "action" &&
+          col.dataIndex !== "avatar" &&
+          col.dataIndex !== "images"
+      )
+      .map(({ render, ...col }) => col);
+  }, [columns]);
+
   const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
+    onChange: (selectedRowKeys) => {
       setRowSelectedKeys(selectedRowKeys);
     },
-    // getCheckboxProps: (record) => ({
-    //   disabled: record.name === "Disabled User",
-    //   name: record.name,
-    // }),
   };
 
   const handleDeleteAll = () => {
@@ -32,6 +41,29 @@ const TableComponent = (props) => {
     if (handleDeleteManyUsers) {
       handleDeleteManyUsers(rowSelectedKeys);
     }
+  };
+
+  const exportExcel = () => {
+    const sanitizedDataSource = Array.isArray(dataSource)
+      ? dataSource.map((row) => {
+          let newRow = { ...row };
+          newColumnExport.forEach((col) => {
+            if (typeof newRow[col.dataIndex] === "function") {
+              newRow[col.dataIndex] = "";
+            }
+          });
+          return newRow;
+        })
+      : [];
+
+    const excel = new Excel();
+    excel
+      .addSheet("Data Export")
+      .addColumns(newColumnExport)
+      .addDataSource(sanitizedDataSource, {
+        str2Percent: true,
+      })
+      .saveAs("Exported_Data.xlsx");
   };
 
   return (
@@ -50,13 +82,23 @@ const TableComponent = (props) => {
           Xóa tất cả
         </Button>
       )}
+
+      <Button
+        type="primary"
+        icon={<DownloadOutlined />}
+        onClick={exportExcel}
+        style={{ marginBottom: 10, marginLeft: 10 }}
+      >
+        Export Excel
+      </Button>
+
       <Table
         rowSelection={{
           type: selectionType,
           ...rowSelection,
         }}
         columns={columns}
-        dataSource={data}
+        dataSource={dataSource}
         {...props}
       />
     </Loading>

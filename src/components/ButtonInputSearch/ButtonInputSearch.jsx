@@ -1,4 +1,3 @@
-
 import React from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import InputComponent from "../InputComponent/InputComponent";
@@ -24,6 +23,7 @@ const ButtonInputSearch = (props) => {
           backgroundColor: backgroundColorInput,
           border: variant === "outlined" ? undefined : "none",
         }}
+        {...props}
       />
       <ButtonComponent
         size={size}

@@ -22,7 +22,7 @@ const AdminPage = () => {
   useEffect(() => {
     if (keySelected) {
       setLoading(true);
-      setTimeout(() => setLoading(false), 500); // Giả lập hiệu ứng loading
+      setTimeout(() => setLoading(false), 500);
     }
   }, [keySelected]);
 
@@ -84,9 +84,11 @@ const AdminPage = () => {
         <Menu
           mode="inline"
           style={{
-            width: 256,
-            boxShadow: "1px 1px 2px #ccc",
+            width: 260,
             height: "100vh",
+            boxShadow: "2px 4px 10px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+            padding: "10px",
           }}
           items={items}
           onClick={handleOnClick}

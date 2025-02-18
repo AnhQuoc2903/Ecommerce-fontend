@@ -16,27 +16,44 @@ const CardComponent = (props) => {
 
   return (
     <WrapperCardStyle
-      style={{
-        width: 200,
-        styles: {
-          header: { width: "200px", height: "200px" },
-          body: { padding: "10px" },
-        },
-      }}
-      cover={<img alt="" src={images} />}
+      cover={
+        <img
+          alt=""
+          src={images}
+          style={{ width: "100%", height: "200px", objectFit: "cover" }}
+        />
+      }
     >
       <WrapperImageStyle src={logo} />
       <StyledNameProduct>{name}</StyledNameProduct>
       <WrapperReportText>
-        <span style={{ marginRight: "4px" }}>
-          <span>{rating} </span>
-          <StarFilled style={{ fontSize: "12px", color: "yellow" }} />
+        <span
+          style={{
+            marginRight: "4px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {Array.from({ length: rating }, (_, index) => (
+            <StarFilled
+              key={index}
+              style={{ fontSize: "14px", color: "#FFD700", marginRight: "2px" }}
+            />
+          ))}
         </span>
-        <WrapperStyleTextSell>| Da Ban {seller || 1000}+</WrapperStyleTextSell>
+        <WrapperStyleTextSell>| Đã bán {seller || 1000}+</WrapperStyleTextSell>
       </WrapperReportText>
       <WrapperPriceText>
-        <span style={{ marginRight: "8px" }}>{price} đ</span>
-        <WrapperDiscountText>{discount || 5}%</WrapperDiscountText>
+        <span
+          style={{
+            fontSize: "18px",
+            fontWeight: "700",
+            marginRight: "8px",
+          }}
+        >
+          {price.toLocaleString()}đ
+        </span>
+        <WrapperDiscountText>-{discount || 5}%</WrapperDiscountText>
       </WrapperPriceText>
     </WrapperCardStyle>
   );
