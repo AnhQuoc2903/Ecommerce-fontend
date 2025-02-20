@@ -24,3 +24,17 @@ export function getItem(label, key, icon, children, type) {
     type,
   };
 }
+
+export const renderOptions = (arr) => {
+  let results = [];
+  if (arr) {
+    results = arr?.map((otp) => {
+      return { value: otp, label: otp };
+    });
+  }
+  results.push({
+    label: "Thêm Type",
+    value: "add_type",
+  });
+  return results;
+};

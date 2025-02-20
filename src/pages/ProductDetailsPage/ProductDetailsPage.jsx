@@ -11,9 +11,9 @@ const ProductDetailsPage = () => {
   return (
     <div
       style={{
-        padding: "10px 0px",
-        background: "#f5f5f5",
-        minHeight: "100vh",
+        width: "100%",
+        background: "#efefef",
+        height: "100",
       }}
     >
       <Breadcrumb

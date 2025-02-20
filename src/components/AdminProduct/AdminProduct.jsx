@@ -9,6 +9,7 @@ import {
   message,
   Rate,
   Row,
+  Select,
   Space,
   Upload,
 } from "antd";
@@ -21,7 +22,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import InputComponent from "../InputComponent/InputComponent";
-import { getBase64 } from "../../utils";
+import { getBase64, renderOptions } from "../../utils";
 import * as ProductServices from "../../services/ProductServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../LoadingComponent/Loading";
@@ -40,6 +41,8 @@ const AdminProduct = () => {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
   const queryClient = useQueryClient();
+  const [typeSelect, setTypeSelect] = useState("");
+
   const [expandedRows, setExpandedRows] = useState({});
   const [form] = Form.useForm();
   const searchInput = useRef(null);
@@ -53,6 +56,7 @@ const AdminProduct = () => {
     rating: "",
     images: [],
     discount: "",
+    newType: "",
   });
 
   const [stateProductDetails, setStateProductDetails] = useState({
@@ -534,7 +538,20 @@ const AdminProduct = () => {
   }, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany, queryClient]);
 
   const onFinish = () => {
-    mutation.mutate(stateProduct, {
+    const params = {
+      name: stateProduct?.name,
+      type:
+        stateProduct?.type === "add_type"
+          ? stateProduct.newType
+          : stateProduct.type,
+      countInStock: stateProduct?.countInStock,
+      price: stateProduct?.price,
+      description: stateProduct?.description,
+      rating: stateProduct?.rating,
+      images: stateProduct?.images,
+      discount: stateProduct?.discount,
+    };
+    mutation.mutate(params, {
       onSettled: () => {
         queryProduct.refetch();
       },
@@ -693,6 +710,23 @@ const AdminProduct = () => {
     setFileList((prevList) => prevList.filter((_, i) => i !== index));
   };
 
+  const fetchAllTypeProduct = async () => {
+    const res = await ProductServices.getAllTypeProduct();
+    return res;
+  };
+
+  const typeProduct = useQuery({
+    queryKey: ["type-product"],
+    queryFn: fetchAllTypeProduct,
+  });
+
+  const handleChangeSelect = (value) => {
+    setStateProduct({
+      ...stateProduct,
+      type: value,
+    });
+  };
+
   return (
     <div>
       <WrapperHeader>Quản lý Sản Phẩm</WrapperHeader>
@@ -786,12 +820,36 @@ const AdminProduct = () => {
                     { required: true, message: "Vui lòng nhập loại sản phẩm!" },
                   ]}
                 >
-                  <InputComponent
-                    value={stateProduct.type}
-                    onChange={handleOnChange}
+                  <Select
+                    allowClear
                     name="type"
+                    // defaultValue="lucy"
+                    // style={{
+                    //   width: 120,
+                    // }}
+                    value={stateProduct.type}
+                    onChange={handleChangeSelect}
+                    options={renderOptions(typeProduct?.data?.data)}
                   />
                 </Form.Item>
+                {stateProduct.type === "add_type" && (
+                  <Form.Item
+                    label="New type"
+                    name="newType"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập loại sản phẩm!",
+                      },
+                    ]}
+                  >
+                    <InputComponent
+                      value={stateProduct.newType}
+                      onChange={handleOnChange}
+                      name="newType"
+                    />
+                  </Form.Item>
+                )}
               </Col>
             </Row>
             <Row gutter={16}>
@@ -982,9 +1040,6 @@ const AdminProduct = () => {
               label="Mô tả sản phẩm"
               name="description"
               labelCol={{ span: 6 }}
-              rules={[
-                { required: true, message: "Vui lòng nhập mô tả sản phẩm!" },
-              ]}
             >
               <Input.TextArea
                 value={stateProduct.description}
@@ -1253,9 +1308,6 @@ const AdminProduct = () => {
               label="Mô tả sản phẩm"
               name="description"
               labelCol={{ span: 6 }}
-              rules={[
-                { required: true, message: "Vui lòng nhập mô tả sản phẩm!" },
-              ]}
             >
               <Input.TextArea
                 value={stateProductDetails.description}

@@ -47,7 +47,13 @@ const ProductDetailsComponent = ({ idProduct }) => {
 
   return (
     <Loading isPending={isPending}>
-      <Row style={{ padding: "10px", background: "#fff", borderRadius: "8px" }}>
+      <Row
+        style={{
+          padding: "10px",
+          background: "#fff",
+          borderRadius: "8px",
+        }}
+      >
         <Col
           span={12}
           style={{
@@ -61,8 +67,14 @@ const ProductDetailsComponent = ({ idProduct }) => {
             src={productDetails?.images?.[0]}
             alt="product"
             preview={false}
-            style={{ borderRadius: "8px", maxWidth: "100%", height: "auto" }}
+            style={{
+              borderRadius: "8px",
+              width: "450px",
+              height: "350px",
+              objectFit: "cover",
+            }}
           />
+
           <Row
             justify="space-between"
             gutter={[8, 8]}
@@ -88,7 +100,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
           </Row>
         </Col>
 
-        <Col span={12} style={{ paddingLeft: "16px" }}>
+        <Col span={12} style={{ padding: "10px" }}>
           <WrapperStyleNameProduct>
             {productDetails?.name}
           </WrapperStyleNameProduct>
@@ -149,13 +161,19 @@ const ProductDetailsComponent = ({ idProduct }) => {
             </WrapperQualityProduct>
           </div>
 
-          <Row gutter={16}>
-            <Col>
+          <Row gutter={16} justify="space-between" style={{ display: "flex" }}>
+            <Col
+              span={12}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
               <Button type="primary" size="large" style={{ width: "220px" }}>
                 Chọn mua
               </Button>
             </Col>
-            <Col>
+            <Col
+              span={12}
+              style={{ display: "flex", justifyContent: "center" }}
+            >
               <Button
                 size="large"
                 style={{

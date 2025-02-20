@@ -1,9 +1,20 @@
-import React from 'react'
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const TypeProduct = ({name}) => {
+const TypeProduct = ({ name }) => {
+  const navigate = useNavigate();
+
+  const handleNavigatetype = (type) => {
+    navigate(`/product/${type}`);
+  };
   return (
-    <div style={{marginBottom: "10px", marginTop: "20px"}}>{name}</div>
-  )
-}
+    <div
+      style={{ marginBottom: "10px", marginTop: "20px", cursor: "pointer" }}
+      onClick={() => handleNavigatetype(name)}
+    >
+      {name}
+    </div>
+  );
+};
 
-export default TypeProduct
+export default TypeProduct;
