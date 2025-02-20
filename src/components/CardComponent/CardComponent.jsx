@@ -7,15 +7,21 @@ import {
   WrapperCardStyle,
   WrapperImageStyle,
 } from "./style";
-import { StarFilled } from "@ant-design/icons";
 import logo from "../../assets/images/logo.png";
+import { useNavigate } from "react-router-dom";
 import { WrapperStyleTextSell } from "../ProductDetailComponent/style";
+import StarRatings from "react-star-ratings";
 
 const CardComponent = (props) => {
-  const { images, name, price, rating, discount, seller } = props;
+  const { images, name, price, rating, discount, seller, id } = props;
+  const navigate = useNavigate();
+  const handleDetailsProduct = (id) => {
+    navigate(`/product-details/${id}`);
+  };
 
   return (
     <WrapperCardStyle
+      onClick={() => handleDetailsProduct(id)}
       cover={
         <img
           alt=""
@@ -27,22 +33,15 @@ const CardComponent = (props) => {
       <WrapperImageStyle src={logo} />
       <StyledNameProduct>{name}</StyledNameProduct>
       <WrapperReportText>
-        <span
-          style={{
-            marginRight: "4px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          {Array.from({ length: rating }, (_, index) => (
-            <StarFilled
-              key={index}
-              style={{ fontSize: "14px", color: "#FFD700", marginRight: "2px" }}
-            />
-          ))}
-        </span>
-        <WrapperStyleTextSell>| Đã bán {seller || 1000}+</WrapperStyleTextSell>
+        <StarRatings
+          rating={rating}
+          starRatedColor="#FFD700"
+          numberOfStars={5}
+          starDimension="20px"
+          starSpacing="2px"
+        />
       </WrapperReportText>
+      <WrapperStyleTextSell> Đã bán {seller || 1000}+</WrapperStyleTextSell>
       <WrapperPriceText>
         <span
           style={{

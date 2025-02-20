@@ -1,22 +1,49 @@
 import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { HomeOutlined } from "@ant-design/icons";
+import { Breadcrumb, Card, Flex } from "antd";
 import ProductDetailsComponent from "../../components/ProductDetailComponent/ProductDetailsComponent";
 
 const ProductDetailsPage = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
   return (
     <div
-      style={{ padding: "0 120px", background: "#efefef", height: "1000px" }}
+      style={{
+        padding: "10px 0px",
+        background: "#f5f5f5",
+        minHeight: "100vh",
+      }}
     >
-      <h2>Trang chủ</h2>
-      <div
-        style={{
-          display: "flex",
-          background: "#fff",
-          justifyContent: "center",
-          gap: "10px"
-        }}
-      >
-        <ProductDetailsComponent />
-      </div>
+      <Breadcrumb
+        style={{ marginBottom: 10 }}
+        items={[
+          {
+            title: (
+              <span
+                onClick={() => navigate("/")}
+                style={{
+                  cursor: "pointer",
+                  marginLeft: "120px",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                }}
+              >
+                <HomeOutlined /> Trang chủ
+              </span>
+            ),
+          },
+          {
+            title: "Chi tiết sản phẩm",
+          },
+        ]}
+      />
+      <Flex justify="center">
+        <Card>
+          <ProductDetailsComponent idProduct={id} />
+        </Card>
+      </Flex>
     </div>
   );
 };

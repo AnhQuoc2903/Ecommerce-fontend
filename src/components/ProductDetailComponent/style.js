@@ -1,15 +1,5 @@
-import { Col, Image, InputNumber } from "antd";
+import { InputNumber } from "antd";
 import styled from "styled-components";
-
-export const WrapperStyleImageSmall = styled(Image)`
-  height: 64px;
-  width: 64px;
-`;
-
-export const WrapperStyleColImage = styled(Col)`
-  flex-basis: unset;
-  display: flex;
-`;
 
 export const WrapperStyleNameProduct = styled.h1`
   color: rgb(36, 36, 36);
@@ -26,16 +16,10 @@ export const WrapperStyleTextSell = styled.span`
   color: #666;
 `;
 
-export const WrapperPriceProduct = styled.div`
-  background: rgb(250, 250, 250);
-  border-radio: 4px;
-`;
-
 export const WrapperPriceTextProduct = styled.h1`
   font-size: 32px;
   line-height: 40px;
   font-weight: 500px;
-  padding: 10px;
   margin-top: 10px;
 `;
 

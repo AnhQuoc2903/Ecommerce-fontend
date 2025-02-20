@@ -15,7 +15,6 @@ import dayjs from "dayjs";
 
 const AdminUser = () => {
   const [rowSelected, setRowSelected] = useState();
-
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
   const queryClient = useQueryClient();

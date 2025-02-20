@@ -1,164 +1,176 @@
-import { Col, Image, Row } from "antd";
-import React from "react";
-import imageProduct from "../../assets/images/details3.jpg";
-import imageProductSmall from "../../assets/images/details2.jpg";
+import { Col, Image, Row, Typography, Button } from "antd";
+import React, { useState } from "react";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import * as ProductServices from "../../services/ProductServices";
+import Loading from "../LoadingComponent/Loading";
+import StarRatings from "react-star-ratings";
 import {
   WrapperAddressProduct,
   WrapperInputNumber,
-  WrapperPriceProduct,
   WrapperPriceTextProduct,
   WrapperQualityProduct,
-  WrapperStyleColImage,
-  WrapperStyleImageSmall,
   WrapperStyleNameProduct,
   WrapperStyleTextSell,
 } from "./style";
-import { MinusOutlined, PlusOutlined, StarFilled } from "@ant-design/icons";
-import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 
-const ProductDetailsComponent = () => {
-  const onChange = () => {};
+const { Text } = Typography;
+
+const ProductDetailsComponent = ({ idProduct }) => {
+  const [numProduct, setNumProduct] = useState(1);
+  const user = useSelector((state) => state?.user);
+
+  const onChange = (value) => {
+    setNumProduct(Number(value));
+  };
+
+  const fetchGetDetailsProduct = async ({ queryKey }) => {
+    const id = queryKey[1];
+    if (id) {
+      const res = await ProductServices.getDetailsProduct(id);
+      return res.data;
+    }
+  };
+
+  const handleChangeCount = (type) => {
+    setNumProduct((prev) =>
+      type === "increase" ? prev + 1 : Math.max(1, prev - 1)
+    );
+  };
+
+  const { isPending, data: productDetails } = useQuery({
+    queryKey: ["product-details", idProduct],
+    queryFn: fetchGetDetailsProduct,
+    enabled: !!idProduct,
+  });
+
   return (
-    <Row style={{ padding: "16px", background: "#fff", borderRadius: "4px" }}>
-      <Col span={10} style={{borderRight: "1px solid #e5e5e5", paddingRight: "8px"}}>
-        <Image src={imageProduct} alt="image product" preview="false" />
-        <Row style={{ paddingTop: "10px", justifyContent: "space-between" }}>
-          <WrapperStyleColImage span={4}>
-            <WrapperStyleImageSmall
-              src={imageProductSmall}
-              alt="image small"
-              preview="false"
-            />
-          </WrapperStyleColImage>
-          <WrapperStyleColImage span={4}>
-            <WrapperStyleImageSmall
-              src={imageProductSmall}
-              alt="image small"
-              preview="false"
-            />
-          </WrapperStyleColImage>
-          <WrapperStyleColImage span={4}>
-            <WrapperStyleImageSmall
-              src={imageProductSmall}
-              alt="image small"
-              preview="false"
-            />
-          </WrapperStyleColImage>
-          <WrapperStyleColImage span={4}>
-            <WrapperStyleImageSmall
-              src={imageProductSmall}
-              alt="image small"
-              preview="false"
-            />
-          </WrapperStyleColImage>
-          <WrapperStyleColImage span={4}>
-            <WrapperStyleImageSmall
-              src={imageProductSmall}
-              alt="image small"
-              preview="false"
-            />
-          </WrapperStyleColImage>
-          <WrapperStyleColImage span={4}>
-            <WrapperStyleImageSmall
-              src={imageProductSmall}
-              alt="image small"
-              preview="false"
-            />
-          </WrapperStyleColImage>
-        </Row>
-      </Col>
-      <Col span={14} style={{ padding: "10px 10px 10px 20px " }}>
-        <WrapperStyleNameProduct>
-          Sách -Thám tử lừng danh Conan
-        </WrapperStyleNameProduct>
-        <div>
-          <StarFilled style={{ fontSize: "12px", color: "rgb(253,216,54)" }} />
-          <StarFilled style={{ fontSize: "12px", color: "rgb(253,216,54)" }} />
-          <StarFilled style={{ fontSize: "12px", color: "rgb(253,216,54)" }} />
-          <StarFilled style={{ fontSize: "12px", color: "rgb(253,216,54)" }} />
-          <StarFilled style={{ fontSize: "12px", color: "rgb(253,216,54)" }} />
-          <WrapperStyleTextSell> | Đã ban 1000+</WrapperStyleTextSell>
-        </div>
-        <WrapperPriceProduct>
-          <WrapperPriceTextProduct>200.000 đ</WrapperPriceTextProduct>
-        </WrapperPriceProduct>
-        <WrapperAddressProduct>
-          <span style={{ color: "rgb(141, 137, 137)" }}>Giao đến:</span>
-          <span style={{ textDecoration: "underline" }}>
-            Q.1, P. Bến Nghé, Hồ Chí Minh
-          </span>
-          <span
-            style={{
-              color: "rgb(11,116,229)",
-              fontSize: "16px",
-              lineHeight: "24px",
-              fontWeight: "500",
-            }}
-          >
-            -Đổi địa chỉ
-          </span>
-        </WrapperAddressProduct>
-        <div
+    <Loading isPending={isPending}>
+      <Row style={{ padding: "10px", background: "#fff", borderRadius: "8px" }}>
+        <Col
+          span={12}
           style={{
-            margin: "10px 0 20px",
-            padding: "10px 0",
-            borderTop: "1px solid #e5e5e5",
-            borderBottom: "1px solid #e5e5e5",
+            borderRight: "1px solid #e5e5e5",
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            textAlign: "center",
           }}
         >
-          <div style={{ marginBottom: "10px" }}>Số lượng</div>
-          <WrapperQualityProduct>
-            <button style={{ border: "none", background: "transparent" }}>
-              <MinusOutlined
-                style={{ color: "#000", fontSize: "20px" }}
-                size="20px"
-              />
-            </button>
-            <WrapperInputNumber
-              defaultValue={1}
-              onChange={onChange}
-              size="small"
+          <Image
+            src={productDetails?.images?.[0]}
+            alt="product"
+            preview={false}
+            style={{ borderRadius: "8px", maxWidth: "100%", height: "auto" }}
+          />
+          <Row
+            justify="space-between"
+            gutter={[8, 8]}
+            style={{ paddingTop: "12px" }}
+          >
+            {productDetails?.images?.slice(1, 5).map((img, index) => (
+              <Col key={index} span={5}>
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Image src={img} alt={`small-${index}`} preview={false} />
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </Col>
+
+        <Col span={12} style={{ paddingLeft: "16px" }}>
+          <WrapperStyleNameProduct>
+            {productDetails?.name}
+          </WrapperStyleNameProduct>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <StarRatings
+              rating={productDetails?.rating}
+              starRatedColor="#FFD700"
+              numberOfStars={5}
+              starDimension="20px"
+              starSpacing="4px"
             />
-            <button style={{ border: "none", background: "transparent" }}>
-              <PlusOutlined
-                style={{ color: "#000", fontSize: "20px" }}
-                size="20px"
+            <WrapperStyleTextSell>
+              | Đã bán {productDetails?.seller || 1000}+
+            </WrapperStyleTextSell>
+          </div>
+
+          <WrapperPriceTextProduct>
+            {productDetails?.price?.toLocaleString() || 1000} đ
+          </WrapperPriceTextProduct>
+
+          <WrapperAddressProduct>
+            <Text type="secondary">Giao đến:</Text>
+            <Text underline>{user?.address}</Text>
+            <Text
+              type="primary"
+              style={{ cursor: "pointer", marginLeft: "8px" }}
+            >
+              - Đổi địa chỉ
+            </Text>
+          </WrapperAddressProduct>
+
+          <div
+            style={{
+              margin: "20px 0",
+              padding: "12px 0",
+              borderTop: "1px solid #e5e5e5",
+              borderBottom: "1px solid #e5e5e5",
+            }}
+          >
+            <Text strong>Số lượng</Text>
+            <WrapperQualityProduct>
+              <Button
+                type="text"
+                icon={<MinusOutlined />}
+                onClick={() => handleChangeCount("decrease")}
               />
-            </button>
-          </WrapperQualityProduct>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <ButtonComponent
-            size={40}
-            style={{
-              background: "rgb(255, 57, 69)",
-              height: "48px",
-              width: "220px",
-              border: "none",
-              borderRadius: "4px",
-            }}
-            textButton={"Chọn mua"}
-            styleTextButton={{
-              color: "#fff",
-              fontSize: "15px",
-              fontWeight: "700",
-            }}
-          ></ButtonComponent>
-          <ButtonComponent
-            size={40}
-            style={{
-              background: "#fff",
-              height: "48px",
-              width: "220px",
-              border: "1px solid rgb(13,92,182)",
-              borderRadius: "4px",
-            }}
-            textButton={"Mua trả sau"}
-            styleTextButton={{ color: "rgb(13,92,182)", fontSize: "15px" }}
-          ></ButtonComponent>
-        </div>
-      </Col>
-    </Row>
+              <WrapperInputNumber
+                onChange={onChange}
+                value={numProduct}
+                defaultValue={1}
+                size="small"
+              />
+              <Button
+                type="text"
+                icon={<PlusOutlined />}
+                onClick={() => handleChangeCount("increase")}
+              />
+            </WrapperQualityProduct>
+          </div>
+
+          <Row gutter={16}>
+            <Col>
+              <Button type="primary" size="large" style={{ width: "220px" }}>
+                Chọn mua
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                size="large"
+                style={{
+                  width: "220px",
+                  borderColor: "rgb(13,92,182)",
+                  color: "rgb(13,92,182)",
+                }}
+              >
+                Mua trả sau
+              </Button>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Loading>
   );
 };
 

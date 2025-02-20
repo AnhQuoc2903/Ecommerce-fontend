@@ -20,7 +20,7 @@ import Banner from "../../components/Banner/Banner";
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 300);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   // const [page, setPage] = useState(10);
   const arr = ["TV", "Tu Lanh", "Lap Top"];
 
@@ -93,6 +93,7 @@ const HomePage = () => {
                     type={product?.type}
                     discount={product?.discount}
                     seller={product?.seller}
+                    id={product?._id}
                   />
                 );
               })}

@@ -52,6 +52,7 @@ const AdminProduct = () => {
     description: "",
     rating: "",
     images: [],
+    discount: "",
   });
 
   const [stateProductDetails, setStateProductDetails] = useState({
@@ -62,6 +63,7 @@ const AdminProduct = () => {
     description: "",
     rating: "",
     images: [],
+    discount: "",
   });
 
   const handleCancel = useCallback(() => {
@@ -74,6 +76,7 @@ const AdminProduct = () => {
       description: "",
       rating: "",
       images: [],
+      discount: "",
     });
     form.resetFields();
   }, [form]);
@@ -97,8 +100,16 @@ const AdminProduct = () => {
   };
 
   const mutation = useMutationHooks((data) => {
-    const { name, type, countInStock, price, description, rating, images } =
-      data;
+    const {
+      name,
+      type,
+      countInStock,
+      price,
+      description,
+      rating,
+      images,
+      discount,
+    } = data;
     return ProductServices.createProduct({
       name,
       type,
@@ -107,6 +118,7 @@ const AdminProduct = () => {
       description,
       rating,
       images,
+      discount,
     });
   });
 
@@ -173,6 +185,7 @@ const AdminProduct = () => {
         price: res?.data?.price,
         description: res?.data?.description,
         rating: res?.data?.rating,
+        discount: res?.data?.discount,
         images: res?.data?.images || [],
       });
     }
@@ -352,6 +365,10 @@ const AdminProduct = () => {
       dataIndex: "type",
     },
     {
+      title: "Discount",
+      dataIndex: "discount",
+    },
+    {
       title: "Image",
       dataIndex: "images",
       align: "center",
@@ -464,6 +481,7 @@ const AdminProduct = () => {
       description: "",
       rating: "",
       images: [],
+      discount: "",
     });
     form.resetFields();
   }, [form]);
@@ -828,20 +846,45 @@ const AdminProduct = () => {
               </Col>
             </Row>
 
-            <Form.Item
-              label="Đánh giá"
-              name="rating"
-              rules={[{ required: true, message: "Vui lòng nhập đánh giá!" }]}
-            >
-              <Rate
-                allowHalf
-                value={stateProduct.rating}
-                onChange={(value) => {
-                  setStateProduct({ ...stateProduct, rating: value });
-                  form.setFieldsValue({ rating: value });
-                }}
-              />
-            </Form.Item>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="Giảm giá" name="Discount">
+                  <InputComponent
+                    value={stateProduct.discount}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      if (/^\d*$/.test(value)) {
+                        setStateProduct({
+                          ...stateProduct,
+                          discount: value,
+                        });
+                        form.setFieldsValue({ discount: value });
+                      }
+                    }}
+                    name="discount"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Đánh giá"
+                  name="rating"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập đánh giá!" },
+                  ]}
+                >
+                  <Rate
+                    allowHalf
+                    value={stateProduct.rating}
+                    onChange={(value) => {
+                      setStateProduct({ ...stateProduct, rating: value });
+                      form.setFieldsValue({ rating: value });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Form.Item
               label="Hình ảnh"
@@ -1070,23 +1113,48 @@ const AdminProduct = () => {
               </Col>
             </Row>
 
-            <Form.Item
-              label="Đánh giá"
-              name="rating"
-              rules={[{ required: true, message: "Vui lòng nhập đánh giá!" }]}
-            >
-              <Rate
-                allowHalf
-                value={stateProductDetails.rating}
-                onChange={(value) => {
-                  setStateProductDetails({
-                    ...stateProductDetails,
-                    rating: value,
-                  });
-                  form.setFieldsValue({ rating: value });
-                }}
-              />
-            </Form.Item>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="Giảm giá" name="discount">
+                  <InputComponent
+                    value={stateProductDetails.discount}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setStateProductDetails({
+                          ...stateProductDetails,
+                          discount: value,
+                        });
+                        form.setFieldsValue({ discount: value });
+                      }
+                    }}
+                    name="discount"
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  label="Đánh giá"
+                  name="rating"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập đánh giá!" },
+                  ]}
+                >
+                  <Rate
+                    allowHalf
+                    value={stateProductDetails.rating}
+                    onChange={(value) => {
+                      setStateProductDetails({
+                        ...stateProductDetails,
+                        rating: value,
+                      });
+                      form.setFieldsValue({ rating: value });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Form.Item
               label="Images"

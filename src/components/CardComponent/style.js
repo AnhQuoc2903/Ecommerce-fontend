@@ -46,8 +46,6 @@ export const StyledNameProduct = styled.div`
 export const WrapperReportText = styled.div`
   font-size: 12px;
   color: rgb(128, 128, 137);
-  display: flex;
-  align-items: center;
   margin: 6px 0;
 `;
 
