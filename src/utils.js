@@ -1,3 +1,5 @@
+import { PlusOutlined } from "@ant-design/icons";
+
 export const isJsonString = (data) => {
   try {
     JSON.parse(data);
@@ -25,16 +27,16 @@ export function getItem(label, key, icon, children, type) {
   };
 }
 
-export const renderOptions = (arr) => {
-  let results = [];
-  if (arr) {
-    results = arr?.map((otp) => {
-      return { value: otp, label: otp };
-    });
-  }
-  results.push({
-    label: "Thêm Type",
-    value: "add_type",
-  });
-  return results;
+export const renderOptions = (arr = []) => {
+  return [
+    ...arr.map((otp) => ({ value: otp, label: otp })),
+    {
+      label: (
+        <>
+          <PlusOutlined style={{ marginRight: 5 }} /> Thêm Type
+        </>
+      ),
+      value: "add_type",
+    },
+  ];
 };

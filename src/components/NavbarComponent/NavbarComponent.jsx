@@ -1,66 +1,28 @@
 import React from "react";
-import {
-  WrapperContent,
-  WrapperLableText,
-  WrapperTextValue,
-  WrapperTextPrice,
-} from "./style";
-import { Checkbox, Rate } from "antd";
+import { useNavigate } from "react-router-dom";
+import { WrapperContent, WrapperLableText, WrapperTextValue } from "./style";
 
-const NavbarComponent = () => {
-  const onChange = () => {};
-  const renderContent = (type, options) => {
-    switch (type) {
-      case "text":
-        return options.map((option) => {
-          return <WrapperTextValue>{option}</WrapperTextValue>;
-        });
-      case "checkbox":
-        return (
-          <Checkbox.Group
-            style={{
-              width: "100px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
-            }}
-            onChange={onChange}
-          >
-            {options.map((option) => {
-              return <Checkbox value={option.value}>{option.label}</Checkbox>;
-            })}
-            <Checkbox value="B">B</Checkbox>
-          </Checkbox.Group>
-        );
-      case "star":
-        return options.map((option) => {
-          return (
-            <>
-              <div style={{ display: "flex" }}>
-                <Rate
-                  style={{ fontSize: "12px" }}
-                  disabled
-                  defaultValue={option}
-                />
-                <span>{`tu ${option} sao`}</span>
-              </div>
-            </>
-          );
-        });
-      case "price":
-        return options.map((option) => {
-          return <WrapperTextPrice>{option}</WrapperTextPrice>;
-        });
-      default:
-        return {};
-    }
+const NavbarComponent = ({ typeProducts }) => {
+  const navigate = useNavigate();
+
+  const handleSelectType = (type) => {
+    const formattedType = encodeURIComponent(type.trim().replace(/\s+/g, "_"));
+    navigate(`/product/${formattedType}`, { state: type });
   };
 
   return (
     <div>
-      <WrapperLableText>Label</WrapperLableText>
+      <WrapperLableText>Danh mục sản phẩm</WrapperLableText>
       <WrapperContent>
-        {renderContent("text", ["Tu lanh", "TV", "MAYGIAT"])}
+        {typeProducts?.map((product, index) => (
+          <WrapperTextValue
+            key={index}
+            onClick={() => handleSelectType(product)}
+            style={{ cursor: "pointer" }}
+          >
+            {product}
+          </WrapperTextValue>
+        ))}
       </WrapperContent>
     </div>
   );

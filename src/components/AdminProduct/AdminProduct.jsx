@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { WrapperHeader, WrapperInputAvatar } from "./style";
 import {
   Alert,
+  AutoComplete,
   Button,
   Col,
   Form,
@@ -41,7 +42,6 @@ const AdminProduct = () => {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
   const queryClient = useQueryClient();
-  const [typeSelect, setTypeSelect] = useState("");
 
   const [expandedRows, setExpandedRows] = useState({});
   const [form] = Form.useForm();
@@ -359,15 +359,18 @@ const AdminProduct = () => {
     },
 
     {
+      title: "Type",
+      dataIndex: "type",
+      sorter: (a, b) => (a.type?.length || 0) - (b.type?.length || 0),
+      ...getColumnSearchProps("type"),
+    },
+
+    {
       title: "CountInStock",
       dataIndex: "countInStock",
       align: "center",
     },
 
-    {
-      title: "Type",
-      dataIndex: "type",
-    },
     {
       title: "Discount",
       dataIndex: "discount",
@@ -823,10 +826,6 @@ const AdminProduct = () => {
                   <Select
                     allowClear
                     name="type"
-                    // defaultValue="lucy"
-                    // style={{
-                    //   width: 120,
-                    // }}
                     value={stateProduct.type}
                     onChange={handleChangeSelect}
                     options={renderOptions(typeProduct?.data?.data)}
@@ -1104,11 +1103,23 @@ const AdminProduct = () => {
                     { required: true, message: "Please input your type!" },
                   ]}
                 >
-                  <InputComponent
+                  <AutoComplete
+                    allowClear
+                    options={typeProduct?.data?.data?.map((item) => ({
+                      value: item,
+                    }))}
                     value={stateProductDetails.type}
-                    onChange={handleOnChangeDetails}
-                    name="type"
-                  />
+                    onChange={(value) =>
+                      handleOnChangeDetails({ target: { name: "type", value } })
+                    }
+                    filterOption={(inputValue, option) =>
+                      option.value
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
+                    }
+                  >
+                    <Input placeholder="Select or type..." />
+                  </AutoComplete>
                 </Form.Item>
               </Col>
             </Row>

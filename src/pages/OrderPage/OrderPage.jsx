@@ -32,14 +32,21 @@ const OrderPage = ({ count = 1 }) => {
     <div style={{ background: "#f5f5fa", width: "100%", height: "100vh" }}>
       <div style={{ height: "100%", width: "1270px", margin: "0 auto" }}>
         <h3>Giỏ hàng</h3>
-        <div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <WrapperLeft>
             <WrapperStyleHeader>
               <span style={{ display: "inline-block", width: "390px" }}>
                 <Checkbox onChange={handleOnchangeCheckAll}></Checkbox>
                 <span>Tất cả ({count} sản phẩm)</span>
               </span>
-              <div style={{ flex: "1", display: "flex", alignItems: "center" }}>
+              <div
+                style={{
+                  flex: "1",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
                 <span>Đơn Gía</span>
                 <span>Số lượng</span>
                 <span>Thành Tiền</span>
