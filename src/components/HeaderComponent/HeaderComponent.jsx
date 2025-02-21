@@ -40,6 +40,12 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   };
 
   useEffect(() => {
+    if (search) {
+      dispatch(searchProduct(search));
+    }
+  }, [search, dispatch]);
+
+  useEffect(() => {
     setLoading(true);
     setUserName(user?.name);
     setUserAvatar(user?.avatar);
@@ -102,8 +108,9 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
             <ButtonInputSearch
               size="large"
               bordered={false}
-              textButton="Tim Kiem"
-              placeholder="Input search text"
+              textButton="Tìm Kiếm"
+              placeholder="Nhập nội dung tìm kiếm"
+              value={search}
               onChange={onSearch}
             />
           </Col>

@@ -17,6 +17,7 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../../redux/slides/userSlide";
+import { GoogleLogin } from "@react-oauth/google";
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -67,6 +68,43 @@ const SignInPage = () => {
   const handleNavigateSignUp = () => {
     navigate("/sign-up");
   };
+
+  const handleSuccess = async (credentialResponse) => {
+    try {
+      console.log("Google Credential Response:", credentialResponse);
+
+      const result = await UserServices.googleAuth(
+        credentialResponse.credential
+      );
+      console.log("Server Response:", result);
+
+      if (result?.status === "OK") {
+        dispatch(
+          updateUser({ ...result.user, access_token: result.accessToken })
+        );
+        localStorage.setItem(
+          "access_token",
+          JSON.stringify(result.accessToken)
+        );
+
+        navigate("/");
+        alert("Đăng nhập thành công");
+      } else {
+        alert("Không có quyền truy cập");
+      }
+    } catch (error) {
+      console.error(
+        "Google Auth Error:",
+        error?.response?.data || error.message
+      );
+      alert(error?.response?.data?.message || "Đăng nhập thất bại");
+    }
+  };
+
+  const handleError = () => {
+    alert("Đăng nhập thất bại");
+  };
+
   return (
     <div
       style={{
@@ -173,6 +211,9 @@ const SignInPage = () => {
               Tạo tài khoản
             </WrapperTextLight>
           </p>
+          <div>
+            <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
+          </div>
         </WrapperContainerLeft>
         <WrapperContainerRight>
           <Image
