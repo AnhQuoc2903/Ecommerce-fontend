@@ -30,4 +30,6 @@ export const WrapperProducts = styled.div`
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
+  min-height: 100px;
+  width: 100%;
 `;

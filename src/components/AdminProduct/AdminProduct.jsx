@@ -659,7 +659,6 @@ const AdminProduct = () => {
         try {
           preview = await getBase64(file.originFileObj);
         } catch (error) {
-          console.error("Lỗi khi chuyển file sang Base64:", error);
           alert("Không thể hiển thị ảnh, vui lòng thử lại!");
           continue;
         }

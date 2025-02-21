@@ -37,6 +37,7 @@ const SignInPage = () => {
     },
     [dispatch]
   );
+
   useEffect(() => {
     if (isSuccess && data?.access_token) {
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
@@ -71,12 +72,9 @@ const SignInPage = () => {
 
   const handleSuccess = async (credentialResponse) => {
     try {
-      console.log("Google Credential Response:", credentialResponse);
-
       const result = await UserServices.googleAuth(
         credentialResponse.credential
       );
-      console.log("Server Response:", result);
 
       if (result?.status === "OK") {
         dispatch(

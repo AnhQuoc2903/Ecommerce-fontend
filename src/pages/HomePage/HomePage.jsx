@@ -16,6 +16,7 @@ import Loading from "../../components/LoadingComponent/Loading";
 import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
 import Banner from "../../components/Banner/Banner";
+import { Empty } from "antd";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -107,17 +108,19 @@ const HomePage = () => {
                     />
                   ))
                 : !isPending && (
-                    <div
+                    <Empty
+                      description={
+                        <span style={{ color: "#ff0000", fontWeight: "bold" }}>
+                          Không tìm thấy sản phẩm nào!
+                        </span>
+                      }
                       style={{
-                        textAlign: "center",
-                        padding: "20px",
-                        fontSize: "18px",
-                        fontWeight: "bold",
-                        color: "#ff0000",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "100%",
                       }}
-                    >
-                      Không tìm thấy sản phẩm nào!
-                    </div>
+                    />
                   )}
             </WrapperProducts>
 

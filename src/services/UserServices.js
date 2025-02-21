@@ -61,7 +61,6 @@ export const updateUser = async (id, data, access_token) => {
     );
     return res.data;
   } catch (error) {
-    console.error("Error updating user:", error);
     throw error;
   }
 };

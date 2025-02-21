@@ -37,7 +37,6 @@ axiosFromBody.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log("ERROR: ", error.response);
     return error;
   }
 );
