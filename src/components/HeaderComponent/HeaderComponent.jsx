@@ -112,6 +112,7 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
               placeholder="Nhập nội dung tìm kiếm"
               value={search}
               onChange={onSearch}
+              onSearch={() => dispatch(searchProduct(search))}
             />
           </Col>
         )}

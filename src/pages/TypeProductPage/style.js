@@ -9,11 +9,10 @@ export const WrapperProducts = styled.div`
 `;
 
 export const WrapperNavbar = styled(Col)`
-  margin-right: 10px;
-  background: #fff;
+  margin-right: 110px;
   padding: 10px;
   border-radius: 4px;
   height: fit-content;
-  margin-top: 20px;
+  margin-top: 10px;
   width: 200px;
 `;

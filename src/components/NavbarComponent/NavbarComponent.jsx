@@ -1,6 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { WrapperContent, WrapperLableText, WrapperTextValue } from "./style";
+import { List, Typography, Card } from "antd";
+import { AppstoreOutlined } from "@ant-design/icons";
+
+const { Title } = Typography;
 
 const NavbarComponent = ({ typeProducts }) => {
   const navigate = useNavigate();
@@ -11,20 +14,23 @@ const NavbarComponent = ({ typeProducts }) => {
   };
 
   return (
-    <div>
-      <WrapperLableText>Danh mục sản phẩm</WrapperLableText>
-      <WrapperContent>
-        {typeProducts?.map((product, index) => (
-          <WrapperTextValue
-            key={index}
+    <Card style={{ width: 250 }}>
+      <Title level={4} style={{ textAlign: "center", marginBottom: 16 }}>
+        Danh mục sản phẩm
+      </Title>
+      <List
+        dataSource={typeProducts}
+        renderItem={(product) => (
+          <List.Item
             onClick={() => handleSelectType(product)}
             style={{ cursor: "pointer" }}
           >
+            <AppstoreOutlined style={{ marginRight: 8 }} />
             {product}
-          </WrapperTextValue>
-        ))}
-      </WrapperContent>
-    </div>
+          </List.Item>
+        )}
+      />
+    </Card>
   );
 };
 

@@ -761,6 +761,10 @@ const AdminProduct = () => {
           columns={columns}
           isPending={isPendingProducts || isPendingDeletedMany}
           data={dataTable}
+          pagination={{
+            pageSize: 10,
+            total: products?.data?.length || 0,
+          }}
           onRow={(record) => {
             return {
               onClick: () => {
