@@ -2,7 +2,7 @@ import { Col, Image, Row, Typography, Button } from "antd";
 import React, { useState } from "react";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as ProductServices from "../../services/ProductServices";
 import Loading from "../LoadingComponent/Loading";
 import StarRatings from "react-star-ratings";
@@ -14,10 +14,16 @@ import {
   WrapperStyleNameProduct,
   WrapperStyleTextSell,
 } from "./style";
+import { useLocation, useNavigate } from "react-router-dom";
+import { addOrderProduct } from "../../redux/slides/orderSlide";
 
 const { Text } = Typography;
 
 const ProductDetailsComponent = ({ idProduct }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
   const [numProduct, setNumProduct] = useState(1);
   const user = useSelector((state) => state?.user);
 
@@ -44,6 +50,35 @@ const ProductDetailsComponent = ({ idProduct }) => {
     queryFn: fetchGetDetailsProduct,
     enabled: !!idProduct,
   });
+
+  const handleAddOrderProduct = () => {
+    if (!user?.id) {
+      navigate("/sign-in", { state: location?.pathname });
+    } else {
+      // {
+      //   name: { type: String, require: true },
+      //   amount: { type: Number, require: true },
+      //   image: { type: String, require: true },
+      //   price: { type: Number, require: true },
+      //   product: {
+      //     type: mongoose.Schema.Types.ObjectId,
+      //     ref: "Product",
+      //     require: true,
+      //   },
+      // },
+      dispatch(
+        addOrderProduct({
+          orderItem: {
+            name: productDetails?.name,
+            amount: numProduct,
+            image: productDetails?.images[0],
+            price: productDetails?.price,
+            product: productDetails?._id,
+          },
+        })
+      );
+    }
+  };
 
   return (
     <Loading isPending={isPending}>
@@ -166,7 +201,12 @@ const ProductDetailsComponent = ({ idProduct }) => {
               span={12}
               style={{ display: "flex", justifyContent: "center" }}
             >
-              <Button type="primary" size="large" style={{ width: "220px" }}>
+              <Button
+                type="primary"
+                size="large"
+                style={{ width: "220px" }}
+                onClick={handleAddOrderProduct}
+              >
                 Chọn mua
               </Button>
             </Col>

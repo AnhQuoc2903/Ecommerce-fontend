@@ -10,7 +10,7 @@ import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import login from "../../assets/images/login.jpg";
 import { Image } from "antd";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as UserServices from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
@@ -22,6 +22,7 @@ import { GoogleLogin } from "@react-oauth/google";
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch("");
@@ -40,16 +41,22 @@ const SignInPage = () => {
 
   useEffect(() => {
     if (isSuccess && data?.access_token) {
-      localStorage.setItem("access_token", JSON.stringify(data?.access_token));
+      localStorage.setItem("access_token", data.access_token);
 
-      const decoded = jwtDecode(data?.access_token);
-
+      const decoded = jwtDecode(data.access_token);
       if (decoded?.id) {
-        handleGetDetailsUser(decoded?.id, data?.access_token);
+        handleGetDetailsUser(decoded.id, data.access_token);
       }
-      navigate("/");
+
+      navigate(location?.state || "/");
     }
-  }, [isSuccess, data, navigate, handleGetDetailsUser]);
+  }, [
+    isSuccess,
+    data?.access_token,
+    navigate,
+    handleGetDetailsUser,
+    location?.state,
+  ]);
 
   const handleOnchangeEmail = (value) => {
     setEmail(value);
