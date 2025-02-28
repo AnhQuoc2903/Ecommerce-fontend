@@ -7,25 +7,67 @@ import {
   WrapperLeft,
   WrapperStyleHeader,
   WrapperListOrder,
-  WrapperPriceDiscount,
   WrapperRight,
   WrapperTotal,
 } from "./style";
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { WrapperInputNumber } from "../../components/ProductDetailComponent/style";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  decreaseAmount,
+  increaseAmount,
+  removeAllOrderProduct,
+  removeOrderProduct,
+} from "../../redux/slides/orderSlide";
 
 const OrderPage = () => {
   const order = useSelector((state) => state.order);
+  const [listChecked, setListChecked] = useState([]);
+  const dispatch = useDispatch();
   const onChange = (e) => {
-    console.log(`checked = ${e.target.value}`);
+    if (listChecked.includes(e.target.value)) {
+      const newListChecked = listChecked.filter(
+        (item) => item !== e.target.value
+      );
+      setListChecked(newListChecked);
+    } else {
+      setListChecked([...listChecked, e.target.value]);
+    }
   };
-  const handleChangeCount = () => {};
+  const handleChangeCount = (type, idProduct, currentAmount) => {
+    if (type === "increase") {
+      dispatch(increaseAmount({ idProduct }));
+    } else {
+      if (currentAmount > 1) {
+        dispatch(decreaseAmount({ idProduct }));
+      } else {
+        handleDeleteOrder(idProduct);
+      }
+    }
+  };
 
-  const handleOnchangeCheckAll = (e) => {};
+  const handleDeleteOrder = (idProduct) => {
+    dispatch(removeOrderProduct({ idProduct }));
+  };
 
-  console.log("order", order);
+  const handleOnchangeCheckAll = (e) => {
+    if (e.target.checked) {
+      const newListChecked = [];
+      order?.orderItems?.forEach((item) => {
+        newListChecked.push(item?.product);
+      });
+      setListChecked(newListChecked);
+    } else {
+      setListChecked([]);
+    }
+  };
+
+  const handleRemoveAllOrder = () => {
+    if (listChecked?.length > 1) {
+      dispatch(removeAllOrderProduct({ listChecked }));
+    }
+  };
 
   return (
     <div style={{ background: "#f5f5fa", width: "100%", height: "100vh" }}>
@@ -35,7 +77,14 @@ const OrderPage = () => {
           <WrapperLeft>
             <WrapperStyleHeader>
               <span style={{ display: "inline-block", width: "390px" }}>
-                <Checkbox onChange={handleOnchangeCheckAll}></Checkbox>
+                <Checkbox
+                  onChange={handleOnchangeCheckAll}
+                  checked={
+                    listChecked?.length === order?.orderItems?.length &&
+                    order?.orderItems?.length > 0
+                  }
+                  disabled={order?.orderItems?.length === 0}
+                ></Checkbox>
                 <span>Tất cả ({order?.orderItems?.length} sản phẩm)</span>
               </span>
               <div
@@ -49,7 +98,10 @@ const OrderPage = () => {
                 <span>Đơn Gía</span>
                 <span>Số lượng</span>
                 <span>Thành Tiền</span>
-                <DeleteOutlined style={{ cursor: "pointer" }} />
+                <DeleteOutlined
+                  style={{ cursor: "pointer" }}
+                  onClick={handleRemoveAllOrder}
+                />
               </div>
             </WrapperStyleHeader>
             <WrapperListOrder>
@@ -64,7 +116,11 @@ const OrderPage = () => {
                         gap: 4,
                       }}
                     >
-                      <Checkbox onChange={onChange}></Checkbox>
+                      <Checkbox
+                        onChange={onChange}
+                        value={order?.product}
+                        checked={listChecked.includes(order?.product)}
+                      ></Checkbox>
                       <img
                         alt=""
                         src={order?.image}
@@ -74,7 +130,16 @@ const OrderPage = () => {
                           objectFit: "cover",
                         }}
                       />
-                      <div>{order?.name}</div>
+                      <div
+                        style={{
+                          width: "260px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {order?.name}
+                      </div>
                     </div>
 
                     <div
@@ -89,9 +154,6 @@ const OrderPage = () => {
                         <span style={{ fontSize: "13px", color: "#242424" }}>
                           {(order?.price).toLocaleString()}
                         </span>
-                        <WrapperPriceDiscount>
-                          {order?.amount}
-                        </WrapperPriceDiscount>
                       </span>
                       <WrapperCountOrder>
                         <button
@@ -100,14 +162,19 @@ const OrderPage = () => {
                             background: "transparent",
                             cursor: "pointer",
                           }}
-                          onClick={() => handleChangeCount("decrease")}
+                          onClick={() =>
+                            handleChangeCount(
+                              "decrease",
+                              order?.product,
+                              order?.amount
+                            )
+                          }
                         >
                           <MinusOutlined
                             style={{ color: "#000", fontSize: "10px" }}
                           />
                         </button>
                         <WrapperInputNumber
-                          onChange={onChange}
                           defaultValue={order?.amount}
                           value={order?.amount}
                           size="small"
@@ -118,7 +185,9 @@ const OrderPage = () => {
                             background: "transparent",
                             cursor: "pointer",
                           }}
-                          onClick={() => handleChangeCount("increase")}
+                          onClick={() =>
+                            handleChangeCount("increase", order?.product)
+                          }
                         >
                           <PlusOutlined
                             style={{ color: "#000", fontSize: "10px" }}
@@ -134,7 +203,10 @@ const OrderPage = () => {
                       >
                         {(order?.price * order?.amount).toLocaleString()}
                       </span>
-                      <DeleteOutlined style={{ cursor: "pointer" }} />
+                      <DeleteOutlined
+                        style={{ cursor: "pointer", fontSize: "14px" }}
+                        onClick={() => handleDeleteOrder(order?.product)}
+                      />
                     </div>
                   </WrapperItemOrder>
                 );
@@ -222,9 +294,17 @@ const OrderPage = () => {
                 <span>Tổng Tiền</span>
                 <span style={{ display: "flex", flexDirection: "column" }}>
                   <span
-                    style={{ color: "rgb(254,56,52)", fontSize: "24px" }}
-                  ></span>
-                  <span style={{ color: "#000", fontSize: "14px" }}></span>
+                    style={{
+                      color: "rgb(254,56,52)",
+                      fontSize: "24px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    0213
+                  </span>
+                  <span style={{ color: "#000", fontSize: "11px" }}>
+                    (Đã bao gồm VAT nếu có)
+                  </span>
                 </span>
               </WrapperTotal>
             </div>

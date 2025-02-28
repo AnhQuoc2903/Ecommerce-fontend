@@ -123,22 +123,21 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
         >
           <Loading isPending={loading}>
             <WrapperHeaderAccunt>
-              {userAvatar ? (
-                <img
+              {userAvatar && userAvatar.length > 0 ? (
+                <Image
+                  preview={false}
                   src={userAvatar}
-                  alt=""
-                  style={{
-                    height: "40px",
-                    width: "40px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
+                  alt="Avatar"
+                  width={40}
+                  height={40}
+                  style={{ borderRadius: "50%", objectFit: "cover" }}
                 />
               ) : (
                 <UserOutlined
                   style={{ fontSize: "30px", marginLeft: "10px" }}
                 />
               )}
+
               {user?.access_token ? (
                 <>
                   <Popover content={content} trigger="click">

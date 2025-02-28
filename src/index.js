@@ -5,9 +5,10 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { persistor, store } from "./redux/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { PersistGate } from "redux-persist/integration/react";
 
 const clientId = process.env.REACT_APP_GG_CLIENT_ID;
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -16,7 +17,9 @@ root.render(
   <GoogleOAuthProvider clientId={clientId}>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <App />
+        <PersistGate loading={null} persistor={persistor}>
+          <App />
+        </PersistGate>
       </Provider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

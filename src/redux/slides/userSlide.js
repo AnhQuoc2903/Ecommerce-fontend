@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+const initialState = JSON.parse(localStorage.getItem("user")) || {
   name: "",
   email: "",
   phone: "",
@@ -40,6 +40,7 @@ export const userSlide = createSlice({
       state.id = _id;
       state.access_token = access_token;
       state.isAdmin = isAdmin;
+      localStorage.setItem("user", JSON.stringify(state));
     },
     resetUser: (state) => {
       state.name = "";
@@ -52,6 +53,7 @@ export const userSlide = createSlice({
       state.id = "";
       state.access_token = "";
       state.isAdmin = false;
+      localStorage.removeItem("user");
     },
   },
 });

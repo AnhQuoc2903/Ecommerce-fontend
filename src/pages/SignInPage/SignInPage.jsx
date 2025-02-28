@@ -85,8 +85,13 @@ const SignInPage = () => {
 
       if (result?.status === "OK") {
         dispatch(
-          updateUser({ ...result.user, access_token: result.accessToken })
+          updateUser({
+            ...result.user,
+            access_token: result.accessToken,
+          })
         );
+
+        localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem(
           "access_token",
           JSON.stringify(result.accessToken)
