@@ -7,6 +7,7 @@ import {
   Col,
   Form,
   Input,
+  InputNumber,
   message,
   Rate,
   Row,
@@ -908,20 +909,29 @@ const AdminProduct = () => {
 
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Giảm giá" name="Discount">
-                  <InputComponent
+                <Form.Item
+                  label="Giảm giá"
+                  name="discount"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập giảm giá!" },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: "Giảm giá không thể âm!",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    min={0}
+                    max={100}
+                    formatter={(value) => `${value}%`}
+                    parser={(value) => value.replace("%", "")}
                     value={stateProduct.discount}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, "");
-                      if (/^\d*$/.test(value)) {
-                        setStateProduct({
-                          ...stateProduct,
-                          discount: value,
-                        });
-                        form.setFieldsValue({ discount: value });
-                      }
+                    onChange={(value) => {
+                      setStateProduct({ ...stateProduct, discount: value });
+                      form.setFieldsValue({ discount: value });
                     }}
-                    name="discount"
+                    style={{ width: "100%" }}
                   />
                 </Form.Item>
               </Col>
@@ -1184,20 +1194,32 @@ const AdminProduct = () => {
 
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Giảm giá" name="discount">
-                  <InputComponent
+                <Form.Item
+                  label="Giảm giá"
+                  name="discount"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập giảm giá!" },
+                    {
+                      type: "number",
+                      min: 0,
+                      message: "Giảm giá không thể âm!",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    min={0}
+                    max={100}
+                    formatter={(value) => `${value}%`}
+                    parser={(value) => value.replace("%", "")}
                     value={stateProductDetails.discount}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, "");
-                      if (/^\d*\.?\d*$/.test(value)) {
-                        setStateProductDetails({
-                          ...stateProductDetails,
-                          discount: value,
-                        });
-                        form.setFieldsValue({ discount: value });
-                      }
+                    onChange={(value) => {
+                      setStateProductDetails({
+                        ...stateProductDetails,
+                        discount: value,
+                      });
+                      form.setFieldsValue({ discount: value });
                     }}
-                    name="discount"
+                    style={{ width: "100%" }}
                   />
                 </Form.Item>
               </Col>

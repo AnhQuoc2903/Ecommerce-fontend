@@ -40,3 +40,13 @@ export const renderOptions = (arr = []) => {
     },
   ];
 };
+
+export const convertPrice = (price) => {
+  try {
+    if (typeof price !== "number") return null;
+    return `${price.toLocaleString("vi-VN")} VND`;
+  } catch (error) {
+    console.error("convertPrice error:", error);
+    return null;
+  }
+};

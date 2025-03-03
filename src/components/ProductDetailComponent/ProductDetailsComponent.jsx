@@ -16,6 +16,7 @@ import {
 } from "./style";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addOrderProduct } from "../../redux/slides/orderSlide";
+import { convertPrice } from "../../utils";
 
 const { Text } = Typography;
 
@@ -153,7 +154,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
           </div>
 
           <WrapperPriceTextProduct>
-            {productDetails?.price?.toLocaleString() || 1000} đ
+            {convertPrice(productDetails?.price)}
           </WrapperPriceTextProduct>
 
           <WrapperAddressProduct>

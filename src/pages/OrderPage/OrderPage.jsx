@@ -20,6 +20,7 @@ import {
   removeAllOrderProduct,
   removeOrderProduct,
 } from "../../redux/slides/orderSlide";
+import { convertPrice } from "../../utils";
 
 const OrderPage = () => {
   const order = useSelector((state) => state.order);
@@ -152,7 +153,7 @@ const OrderPage = () => {
                     >
                       <span>
                         <span style={{ fontSize: "13px", color: "#242424" }}>
-                          {(order?.price).toLocaleString()}
+                          {convertPrice(order?.price)}
                         </span>
                       </span>
                       <WrapperCountOrder>
@@ -201,7 +202,7 @@ const OrderPage = () => {
                           fontWeight: "bold",
                         }}
                       >
-                        {(order?.price * order?.amount).toLocaleString()}
+                        {convertPrice(order?.price * order?.amount)}
                       </span>
                       <DeleteOutlined
                         style={{ cursor: "pointer", fontSize: "14px" }}
@@ -232,7 +233,7 @@ const OrderPage = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    0
+                    {convertPrice(order?.price * order?.amount)}
                   </span>
                 </div>
                 <div

@@ -11,6 +11,7 @@ import logo from "../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import { WrapperStyleTextSell } from "../ProductDetailComponent/style";
 import StarRatings from "react-star-ratings";
+import { convertPrice } from "../../utils";
 
 const CardComponent = (props) => {
   const { images, name, price, rating, discount, seller, id } = props;
@@ -50,7 +51,7 @@ const CardComponent = (props) => {
             marginRight: "8px",
           }}
         >
-          {price?.toLocaleString()}đ
+          {convertPrice(price)}
         </span>
         <WrapperDiscountText>-{discount || 5}%</WrapperDiscountText>
       </WrapperPriceText>
