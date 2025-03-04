@@ -238,8 +238,11 @@ const AdminUser = () => {
     {
       title: "Date of Birth",
       dataIndex: "dob",
-      render: (dob) => (dob ? dayjs(dob).format("DD-MM-YYYY") : ""),
+      width: 150,
+      render: (dob) =>
+        dob ? <span>{dayjs(dob).format("DD-MM-YYYY")}</span> : "",
     },
+
     {
       title: "Email",
       dataIndex: "email",
@@ -247,6 +250,11 @@ const AdminUser = () => {
     {
       title: "Phone",
       dataIndex: "phone",
+    },
+
+    {
+      title: "City",
+      dataIndex: "city",
     },
     {
       title: "Address",

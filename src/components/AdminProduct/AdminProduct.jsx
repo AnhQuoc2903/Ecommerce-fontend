@@ -375,7 +375,9 @@ const AdminProduct = () => {
     {
       title: "Discount",
       dataIndex: "discount",
+      render: (value) => (value ? `${value}%` : ""),
     },
+
     {
       title: "Image",
       dataIndex: "images",
@@ -913,11 +915,11 @@ const AdminProduct = () => {
                   label="Giảm giá"
                   name="discount"
                   rules={[
-                    { required: true, message: "Vui lòng nhập giảm giá!" },
                     {
                       type: "number",
                       min: 0,
-                      message: "Giảm giá không thể âm!",
+                      max: 100,
+                      message: "Giảm giá phải từ 0% đến 100%!",
                     },
                   ]}
                 >
@@ -1198,11 +1200,11 @@ const AdminProduct = () => {
                   label="Giảm giá"
                   name="discount"
                   rules={[
-                    { required: true, message: "Vui lòng nhập giảm giá!" },
                     {
                       type: "number",
                       min: 0,
-                      message: "Giảm giá không thể âm!",
+                      max: 100,
+                      message: "Giảm giá phải từ 0% đến 100%!",
                     },
                   ]}
                 >

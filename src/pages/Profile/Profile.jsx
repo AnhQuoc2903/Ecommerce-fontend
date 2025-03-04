@@ -14,7 +14,11 @@ import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
 import { Button, DatePicker, message, Select, Upload } from "antd";
 import { updateUser } from "../../redux/slides/userSlide";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { getBase64 } from "../../utils";
 import dayjs from "dayjs";
 
@@ -26,6 +30,7 @@ const Profile = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
   const [avatar, setAvatar] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState("");
@@ -42,6 +47,7 @@ const Profile = () => {
     setName(user?.name);
     setAvatar(user?.avatar);
     setPhone(user?.phone);
+    setCity(user?.city);
     setAddress(user?.address);
     setGender(user?.gender);
     setDob(user?.dob);
@@ -62,10 +68,20 @@ const Profile = () => {
 
   useEffect(() => {
     if (isSuccess && data?.status === "OK") {
-      message.success(data?.message);
+      message.open({
+        type: "success",
+        content: data?.message || "Cập nhật thành công!",
+        duration: 3,
+        icon: <CheckCircleOutlined style={{ color: "#52c41a" }} />,
+      });
       handleUpdateUser(user?.id, user?.access_token);
     } else if (isError) {
-      message.error(data?.message);
+      message.open({
+        type: "error",
+        content: data?.message || "Đã xảy ra lỗi! Vui lòng thử lại.",
+        duration: 5,
+        icon: <CloseCircleOutlined style={{ color: "#ff4d4f" }} />,
+      });
     }
   }, [
     isSuccess,
@@ -100,6 +116,10 @@ const Profile = () => {
 
   const handleOnchangeAddress = (value) => {
     setAddress(value);
+  };
+
+  const handleOnchangeCity = (value) => {
+    setCity(value);
   };
 
   const handleOnchangeAvatar = async ({ fileList }) => {
@@ -145,6 +165,7 @@ const Profile = () => {
     setAddress(user?.address);
     setGender(user?.gender);
     setDob(user?.dob);
+    setCity(user?.city);
   };
 
   const handleUpdate = () => {
@@ -157,6 +178,7 @@ const Profile = () => {
       dob,
       avatar,
       address,
+      city,
       access_token: user?.access_token,
     });
   };
@@ -240,6 +262,22 @@ const Profile = () => {
               value={phone}
               onChange={handleOnchangePhone}
               placeholder="Nhập số điện thoại VD: 0313456789"
+              style={{
+                width: "100%",
+                borderRadius: "8px",
+                padding: "8px",
+                border: "1px solid #ddd",
+              }}
+            />
+          </WrapperInput>
+
+          <WrapperInput>
+            <WrapperLable htmlFor="city">Thành Phố</WrapperLable>
+            <InputForm
+              id="city"
+              value={city}
+              placeholder="Nhập thành phố"
+              onChange={handleOnchangeCity}
               style={{
                 width: "100%",
                 borderRadius: "8px",

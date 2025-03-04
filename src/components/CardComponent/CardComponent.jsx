@@ -1,7 +1,6 @@
 import React from "react";
 import {
   StyledNameProduct,
-  WrapperDiscountText,
   WrapperPriceText,
   WrapperReportText,
   WrapperCardStyle,
@@ -14,7 +13,7 @@ import StarRatings from "react-star-ratings";
 import { convertPrice } from "../../utils";
 
 const CardComponent = (props) => {
-  const { images, name, price, rating, discount, seller, id } = props;
+  const { images, name, price, rating, seller, id } = props;
   const navigate = useNavigate();
   const handleDetailsProduct = (id) => {
     navigate(`/product-details/${id}`);
@@ -53,7 +52,6 @@ const CardComponent = (props) => {
         >
           {convertPrice(price)}
         </span>
-        <WrapperDiscountText>-{discount || 5}%</WrapperDiscountText>
       </WrapperPriceText>
     </WrapperCardStyle>
   );

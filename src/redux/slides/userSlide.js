@@ -11,6 +11,7 @@ const initialState = JSON.parse(localStorage.getItem("user")) || {
   access_token: "",
   id: "",
   isAdmin: false,
+  city: "",
 };
 
 export const userSlide = createSlice({
@@ -19,17 +20,19 @@ export const userSlide = createSlice({
   reducers: {
     updateUser: (state, action) => {
       const {
-        name = "",
-        email = "",
-        access_token = "",
-        phone = "",
-        address = "",
-        avatar = "",
-        gender = "",
-        dob = "",
-        isAdmin = "",
-        _id = "",
+        name = state.name,
+        email = state.email,
+        phone = state.phone,
+        address = state.address,
+        avatar = state.avatar,
+        gender = state.gender,
+        dob = state.dob,
+        city = state.city,
+        isAdmin = state.isAdmin,
+        _id = state.id,
+        access_token = state.access_token,
       } = action.payload;
+
       state.name = name;
       state.email = email;
       state.phone = phone;
@@ -37,11 +40,14 @@ export const userSlide = createSlice({
       state.avatar = avatar;
       state.gender = gender;
       state.dob = dob;
+      state.city = city;
+      state.isAdmin = isAdmin;
       state.id = _id;
       state.access_token = access_token;
-      state.isAdmin = isAdmin;
+
       localStorage.setItem("user", JSON.stringify(state));
     },
+
     resetUser: (state) => {
       state.name = "";
       state.email = "";
@@ -53,6 +59,7 @@ export const userSlide = createSlice({
       state.id = "";
       state.access_token = "";
       state.isAdmin = false;
+      state.city = "";
       localStorage.removeItem("user");
     },
   },
