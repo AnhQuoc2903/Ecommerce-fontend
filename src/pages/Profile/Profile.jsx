@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  ModalContent,
+  ModalFooter,
+  ModalInput,
+  ModalLabel,
   WrapperContentProfile,
   WrapperHeader,
   WrapperInput,
@@ -12,11 +16,12 @@ import { useDispatch, useSelector } from "react-redux";
 import * as UserServices from "../../services/UserServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
-import { Button, DatePicker, message, Select, Upload } from "antd";
+import { Button, DatePicker, message, Modal, Select, Upload } from "antd";
 import { updateUser } from "../../redux/slides/userSlide";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
+  LockOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import { getBase64 } from "../../utils";
@@ -35,12 +40,26 @@ const Profile = () => {
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState("");
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const mutation = useMutationHooks((data) => {
     const { id, access_token, ...rests } = data;
     return UserServices.updateUser(id, rests, access_token);
   });
 
+  const passwordMutation = useMutationHooks((data) => {
+    return UserServices.changePassword(user?.id, data, user?.access_token);
+  });
+
   const { data, isPending, isSuccess, isError } = mutation;
+  const {
+    data: passwordData,
+    isSuccess: isPasswordSuccess,
+    isError: isPasswordError,
+  } = passwordMutation;
 
   useEffect(() => {
     setEmail(user?.email);
@@ -91,6 +110,27 @@ const Profile = () => {
     user?.access_token,
     data,
   ]);
+
+  useEffect(() => {
+    if (isPasswordSuccess && passwordData?.status === "OK") {
+      message.success(passwordData?.message || "Đổi mật khẩu thành công!");
+      setIsModalOpen(false);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } else if (isPasswordError && passwordData) {
+      message.error(
+        passwordData?.message || "Đổi mật khẩu thất bại, vui lòng thử lại."
+      );
+    }
+  }, [isPasswordSuccess, isPasswordError, passwordData]);
+
+  useEffect(() => {
+    if (passwordData && passwordData.status === "ERR") {
+      console.log("Password Change Error:", passwordData);
+      message.error(passwordData.message);
+    }
+  }, [passwordData]);
 
   const handleOnchangeName = (value) => {
     setName(value);
@@ -181,6 +221,45 @@ const Profile = () => {
       city,
       access_token: user?.access_token,
     });
+  };
+
+  const handleChangePassword = () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      message.error("Vui lòng nhập đầy đủ thông tin!");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      message.error("Mật khẩu mới phải có ít nhất 8 ký tự!");
+      return;
+    }
+
+    if (!/[0-9]/.test(newPassword)) {
+      message.error("Mật khẩu mới phải chứa ít nhất một chữ số!");
+      return;
+    }
+
+    if (!/[!@#$%^&*]/.test(newPassword)) {
+      message.error("Mật khẩu mới phải chứa ít nhất một ký tự đặc biệt!");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      message.error("Mật khẩu mới không khớp!");
+      return;
+    }
+
+    passwordMutation.mutate({
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    });
+  };
+  const handleCancelModal = () => {
+    setIsModalOpen(false);
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
   };
 
   return (
@@ -373,8 +452,78 @@ const Profile = () => {
               styleTextButton={{ color: "#fff" }}
             />
           </div>
+          <ButtonComponent
+            textButton="Đổi mật khẩu"
+            icon={<LockOutlined />}
+            onClick={() => setIsModalOpen(true)}
+            styleButton={{
+              background: "#FF5733",
+              color: "#fff",
+              marginTop: "20px",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "16px",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+            }}
+          />
         </WrapperContentProfile>
       </Loading>
+
+      <Modal
+        title="Đổi mật khẩu"
+        open={isModalOpen}
+        onCancel={handleCancelModal}
+        footer={null}
+      >
+        <ModalContent>
+          <div>
+            <ModalLabel htmlFor="oldPassword">Mật khẩu cũ</ModalLabel>
+            <ModalInput
+              id="oldPassword"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              placeholder="Nhập mật khẩu cũ"
+            />
+          </div>
+
+          <div>
+            <ModalLabel htmlFor="newPassword">Mật khẩu mới</ModalLabel>
+            <ModalInput
+              id="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Nhập mật khẩu mới"
+            />
+          </div>
+
+          <div>
+            <ModalLabel htmlFor="confirmPassword">Xác nhận mật khẩu</ModalLabel>
+            <ModalInput
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Xác nhận mật khẩu mới"
+            />
+          </div>
+
+          <ModalFooter>
+            <Button key="cancel" onClick={handleCancelModal}>
+              Hủy
+            </Button>
+            <Button key="submit" type="primary" onClick={handleChangePassword}>
+              Xác nhận
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

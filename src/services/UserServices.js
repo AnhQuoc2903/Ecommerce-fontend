@@ -109,3 +109,51 @@ export const googleAuth = async (token) => {
   );
   return res.data;
 };
+
+export const forgotPassword = async (email) => {
+  const res = await axios.post(
+    `${process.env.REACT_APP_API_URL}/user/forgot-password`,
+    { email }
+  );
+  return res.data;
+};
+
+export const resetPassword = async (token, data) => {
+  try {
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/user/reset-password/${token}`,
+      data,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi reset password:",
+      error?.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const changePassword = async (id, data, access_token) => {
+  try {
+    const res = await axiosJWT.put(
+      `${process.env.REACT_APP_API_URL}/user/change-password/${id}`,
+      data,
+      {
+        headers: {
+          token: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi đổi mật khẩu:",
+      error?.response?.data || error.message
+    );
+    throw error;
+  }
+};

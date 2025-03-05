@@ -1,3 +1,4 @@
+import { Input } from "antd";
 import styled from "styled-components";
 
 export const WrapperHeader = styled.h1`
@@ -52,4 +53,36 @@ export const WrapperInput = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
+`;
+
+export const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+export const ModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+`;
+
+export const ModalInput = styled(Input.Password)`
+  width: 100%;
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  &:focus {
+    border-color: #1a94ff;
+    box-shadow: 0 0 0 2px rgba(26, 148, 255, 0.2);
+  }
+`;
+
+export const ModalLabel = styled.label`
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: block;
 `;

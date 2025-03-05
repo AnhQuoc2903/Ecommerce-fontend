@@ -1,15 +1,22 @@
 import React from "react";
 import { WrapperInputStyle } from "./style";
 
-const InputForm = ({ onChange, value, placeholder = "Nhận test", ...rests }) => {
+const InputForm = ({
+  onChange,
+  value,
+  placeholder = "Nhận test",
+  ...rests
+}) => {
   const handleOnchangeInput = (e) => {
-    onChange(e.target.value);
+    if (onChange) {
+      onChange(e.target.value);
+    }
   };
 
   return (
     <WrapperInputStyle
       placeholder={placeholder}
-      value={value}
+      value={value || ""}
       {...rests}
       onChange={handleOnchangeInput}
     />

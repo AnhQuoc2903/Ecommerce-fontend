@@ -77,6 +77,10 @@ const SignInPage = () => {
     navigate("/sign-up");
   };
 
+  const handleNavigateForget = () => {
+    navigate("/forget-password");
+  };
+
   const handleSuccess = async (credentialResponse) => {
     try {
       const result = await UserServices.googleAuth(
@@ -210,7 +214,9 @@ const SignInPage = () => {
             ></ButtonComponent>
           </Loading>
           <p>
-            <WrapperTextLight>Quên mật khẩu</WrapperTextLight>
+            <WrapperTextLight onClick={handleNavigateForget}>
+              Quên mật khẩu
+            </WrapperTextLight>
           </p>
           <p>
             <WrapperText> Chưa có tài khoản?</WrapperText>
