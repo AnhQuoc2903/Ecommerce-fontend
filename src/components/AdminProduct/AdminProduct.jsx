@@ -775,6 +775,7 @@ const AdminProduct = () => {
               },
             };
           }}
+          scroll={{ x: "max-content" }}
         />
       </div>
       <ModalComponent

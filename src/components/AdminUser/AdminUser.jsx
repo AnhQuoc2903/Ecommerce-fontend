@@ -8,7 +8,7 @@ import InputComponent from "../InputComponent/InputComponent";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useMutationHooks } from "../../hooks/useMutationHook";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import * as UserServices from "../../services/UserServices";
 import dayjs from "dayjs";
@@ -17,7 +17,10 @@ const AdminUser = () => {
   const [rowSelected, setRowSelected] = useState();
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const user = useSelector((state) => state?.user);
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const [loadingBlock, setLoadingBlock] = useState(false);
+
   const searchInput = useRef(null);
 
   const handleCancelDelete = () => {
@@ -55,6 +58,41 @@ const AdminUser = () => {
     const res = UserServices.deleteManyUser(ids, token);
     return res;
   });
+
+  const mutationBlockUser = useMutationHooks(async (data) => {
+    const { id, isBlocked, token } = data;
+    return await UserServices.blockUser(id, isBlocked, token);
+  });
+
+  useEffect(() => {
+    if (mutationBlockUser.isSuccess) {
+      message.success("Cập nhật trạng thái thành công!");
+      queryClient.invalidateQueries(["users"]);
+    }
+    if (mutationBlockUser.isError) {
+      message.error("Có lỗi xảy ra khi cập nhật trạng thái.");
+    }
+  }, [mutationBlockUser.isSuccess, mutationBlockUser.isError, queryClient]);
+
+  const handleBlockUser = (id, isBlocked) => {
+    setLoadingBlock(true);
+    mutationBlockUser.mutate(
+      { id, isBlocked: !isBlocked, token: user?.access_token },
+      {
+        onSuccess: (data) => {
+          if (data?.forceLogout) {
+            message.warning("Bạn đã bị chặn! Hệ thống sẽ đăng xuất.");
+            setTimeout(() => {
+              dispatch(UserServices.logoutUser());
+            }, 2000);
+          }
+        },
+        onSettled: () => {
+          setLoadingBlock(false);
+        },
+      }
+    );
+  };
 
   const {
     data: dataDeletedMany,
@@ -246,6 +284,9 @@ const AdminUser = () => {
     {
       title: "Email",
       dataIndex: "email",
+      render: (text) => <span>{text}</span>,
+      sorter: (a, b) => (a.email?.length || 0) - (b.email?.length || 0),
+      ...getColumnSearchProps("email"),
     },
     {
       title: "Phone",
@@ -255,10 +296,27 @@ const AdminUser = () => {
     {
       title: "City",
       dataIndex: "city",
+      width: 150,
     },
     {
       title: "Address",
       dataIndex: "address",
+      width: 150,
+    },
+
+    {
+      title: "Block User",
+      dataIndex: "isBlocked",
+      render: (isBlocked, record) => (
+        <Button
+          type={isBlocked ? "primary" : "default"}
+          danger={isBlocked}
+          loading={loadingBlock}
+          onClick={() => handleBlockUser(record._id, isBlocked)}
+        >
+          {isBlocked ? "Unblock" : "Block"}
+        </Button>
+      ),
     },
 
     {
@@ -306,6 +364,7 @@ const AdminUser = () => {
             onRow={(record) => ({
               onClick: () => setRowSelected(record?._id),
             })}
+            scroll={{ x: "max-content" }}
           />
         ) : (
           <p style={{ textAlign: "center", fontSize: "16px", color: "#888" }}>

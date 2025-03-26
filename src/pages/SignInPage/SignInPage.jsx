@@ -49,14 +49,10 @@ const SignInPage = () => {
       }
 
       navigate(location?.state || "/");
+    } else if (data?.status === "ERR") {
+      alert(data?.message);
     }
-  }, [
-    isSuccess,
-    data?.access_token,
-    navigate,
-    handleGetDetailsUser,
-    location?.state,
-  ]);
+  }, [isSuccess, data, navigate, handleGetDetailsUser, location?.state]);
 
   const handleOnchangeEmail = (value) => {
     setEmail(value);
@@ -67,10 +63,19 @@ const SignInPage = () => {
   };
 
   const handleSignIn = () => {
-    mutation.mutate({
-      email,
-      password,
-    });
+    mutation.mutate(
+      {
+        email,
+        password,
+      },
+      {
+        onSuccess: (data) => {
+          if (data?.status === "ERR") {
+            alert(data?.message);
+          }
+        },
+      }
+    );
   };
 
   const handleNavigateSignUp = () => {
@@ -88,6 +93,11 @@ const SignInPage = () => {
       );
 
       if (result?.status === "OK") {
+        if (result.user.isBlocked) {
+          alert("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ hỗ trợ.");
+          return;
+        }
+
         dispatch(
           updateUser({
             ...result.user,
@@ -96,10 +106,7 @@ const SignInPage = () => {
         );
 
         localStorage.setItem("user", JSON.stringify(result.user));
-        localStorage.setItem(
-          "access_token",
-          JSON.stringify(result.accessToken)
-        );
+        localStorage.setItem("access_token", result.accessToken);
 
         navigate("/");
         alert("Đăng nhập thành công");
@@ -189,9 +196,10 @@ const SignInPage = () => {
                 fontStyle: "italic",
               }}
             >
-              {data?.message}
+              {data?.message || "Đăng nhập thất bại!"}
             </span>
           )}
+
           <Loading isPending={isPending}>
             <ButtonComponent
               disabled={!email.length || !password.length}

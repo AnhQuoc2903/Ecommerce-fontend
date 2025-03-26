@@ -157,3 +157,24 @@ export const changePassword = async (id, data, access_token) => {
     throw error;
   }
 };
+
+export const blockUser = async (id, isBlocked, access_token) => {
+  try {
+    const res = await axiosJWT.put(
+      `${process.env.REACT_APP_API_URL}/user/block-user/${id}`,
+      { isBlocked },
+      {
+        headers: {
+          token: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error(
+      "❌ Lỗi chặn/mở chặn người dùng:",
+      error?.response?.data || error.message
+    );
+    throw error;
+  }
+};

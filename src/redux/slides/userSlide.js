@@ -48,19 +48,22 @@ export const userSlide = createSlice({
       localStorage.setItem("user", JSON.stringify(state));
     },
 
-    resetUser: (state) => {
-      state.name = "";
-      state.email = "";
-      state.phone = "";
-      state.address = "";
-      state.avatar = "";
-      state.gender = "";
-      state.dob = "";
-      state.id = "";
-      state.access_token = "";
-      state.isAdmin = false;
-      state.city = "";
+    resetUser: () => {
       localStorage.removeItem("user");
+      localStorage.removeItem("access_token");
+      return {
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        avatar: "",
+        gender: "",
+        dob: "",
+        id: "",
+        access_token: "",
+        isAdmin: false,
+        city: "",
+      };
     },
   },
 });

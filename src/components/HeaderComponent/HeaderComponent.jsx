@@ -53,6 +53,20 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
     setLoading(false);
   }, [user?.name, user?.avatar]);
 
+  useEffect(() => {
+    setLoading(true);
+
+    if (user?.access_token) {
+      setUserName(user?.name || "");
+      setUserAvatar(user?.avatar || "");
+    } else {
+      setUserName("");
+      setUserAvatar("");
+    }
+
+    setLoading(false);
+  }, [user]);
+
   const content = (
     <div>
       <WrapperContentPopup onClick={() => navigate("/profile-user")}>
