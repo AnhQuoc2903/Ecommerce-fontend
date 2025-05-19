@@ -71,6 +71,6 @@
       "localhost",
       ".localhost"
     ],
-    "proxy": "https://ecommerce-backend-21.onrender.com"
+    "proxy": "http://localhost:3000"
   }
 }
