@@ -1,4 +1,4 @@
-import { InputNumber } from "antd";
+import { Radio } from "antd";
 import styled from "styled-components";
 
 export const WrapperStyleHeader = styled.div`
@@ -22,9 +22,7 @@ export const WrapperLeft = styled.div`
   flex-direction: column;
 `;
 
-export const WrapperListOrder = styled.div`
-  width: 100%;
-`;
+export const WrapperListOrder = styled.div``;
 
 export const WrapperItemOrder = styled.div`
   display: flex;
@@ -70,6 +68,12 @@ export const WrapperInfo = styled.div`
   width: 100%;
 `;
 
+export const Lable = styled.span`
+  font-size: 12px;
+  color: #000;
+  font-weight: bold;
+`;
+
 export const WrapperTotal = styled.div`
   display: flex;
   align-items: center;
@@ -80,14 +84,17 @@ export const WrapperTotal = styled.div`
   width: 100%;
 `;
 
-export const WrapperInputNumber = styled(InputNumber)`
-  &.ant-input-number.ant-input-number-sm {
-    width: 60px;
-    border-top: none;
-    border-bottom: none;
-
-    .ant-input-number-handler-wrap {
-      display: none !important;
-    }
-  }
+export const WrapperRadio = styled(Radio.Group)`
+  margin-top: 6px;
+  background: rgb(240, 248, 255);
+  border: 1px solid rgb(194, 255, 255);
+  width: 500px;
+  border-radius: 4px;
+  height: 100px;
+  padding: 16px;
+  font-weight: normal;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
 `;

@@ -48,8 +48,14 @@ function App() {
   useEffect(() => {
     setIsPending(true);
     const { storageData, decoded } = handleDecoded();
+
     if (decoded?.id) {
       handleGetDetailsUser(decoded?.id, storageData);
+    } else {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser && isJsonString(storedUser)) {
+        dispatch(updateUser(JSON.parse(storedUser)));
+      }
     }
     setIsPending(false);
   }, [handleGetDetailsUser]);
@@ -71,7 +77,7 @@ function App() {
           console.error("Failed to refresh token:", error);
 
           localStorage.removeItem("access_token");
-          window.location.reload();
+          dispatch(UserServices.logoutUser());
           return Promise.reject(error);
         }
       }

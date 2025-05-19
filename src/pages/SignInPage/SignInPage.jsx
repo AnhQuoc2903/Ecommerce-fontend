@@ -98,15 +98,10 @@ const SignInPage = () => {
           return;
         }
 
-        dispatch(
-          updateUser({
-            ...result.user,
-            access_token: result.accessToken,
-          })
-        );
+        const userData = { ...result.user, access_token: result.accessToken };
 
-        localStorage.setItem("user", JSON.stringify(result.user));
-        localStorage.setItem("access_token", result.accessToken);
+        dispatch(updateUser(userData));
+        localStorage.setItem("user", JSON.stringify(userData));
 
         navigate("/");
         alert("Đăng nhập thành công");

@@ -3,6 +3,7 @@ import ForgotPasswordPage from "../pages/ForgotPasswordPage/ForgotPasswordPage";
 import HomePage from "../pages/HomePage/HomePage";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import OrderPage from "../pages/OrderPage/OrderPage";
+import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import ProductDetailsPage from "../pages/ProductDetailsPage/ProductDetailsPage";
 import ProductPage from "../pages/ProductPage/ProductPage";
@@ -42,6 +43,11 @@ export const routes = [
     path: "/forget-password",
     page: ForgotPasswordPage,
     isShowHeader: false,
+  },
+  {
+    path: "/order-success",
+    page: OrderSuccess,
+    isShowHeader: true,
   },
   {
     path: "/reset-password/:token",

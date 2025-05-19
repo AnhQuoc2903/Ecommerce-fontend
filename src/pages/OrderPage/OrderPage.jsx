@@ -31,7 +31,7 @@ import * as UserServices from "../../services/UserServices";
 import { updateUser } from "../../redux/slides/userSlide";
 import { useNavigate } from "react-router-dom";
 
-const OrderPage = () => {
+const PaymentPage = () => {
   const order = useSelector((state) => state.order);
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -567,4 +567,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default PaymentPage;
