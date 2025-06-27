@@ -25,10 +25,9 @@ const SignInPage = () => {
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch("");
+  const dispatch = useDispatch();
 
   const mutation = useMutationHooks((data) => UserServices.loginUser(data));
-
   const { data, isPending, isSuccess } = mutation;
 
   const handleGetDetailsUser = useCallback(
@@ -42,12 +41,10 @@ const SignInPage = () => {
   useEffect(() => {
     if (isSuccess && data?.access_token) {
       localStorage.setItem("access_token", data.access_token);
-
       const decoded = jwtDecode(data.access_token);
       if (decoded?.id) {
         handleGetDetailsUser(decoded.id, data.access_token);
       }
-
       navigate(location?.state || "/");
     } else if (data?.status === "ERR") {
       alert(data?.message);
@@ -99,20 +96,15 @@ const SignInPage = () => {
         }
 
         const userData = { ...result.user, access_token: result.accessToken };
-
         dispatch(updateUser(userData));
         localStorage.setItem("user", JSON.stringify(userData));
-
         navigate("/");
         alert("Đăng nhập thành công");
       } else {
         alert("Không có quyền truy cập");
       }
     } catch (error) {
-      console.error(
-        "Google Auth Error:",
-        error?.response?.data || error.message
-      );
+      console.error("Google Auth Error:", error?.response?.data || error.message);
       alert(error?.response?.data?.message || "Đăng nhập thất bại");
     }
   };
@@ -127,123 +119,152 @@ const SignInPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "rgba(151, 226, 236, 0.53)",
+        background: "linear-gradient(to right, #c2e9fb, #a1c4fd)",
         height: "100vh",
       }}
     >
       <div
         style={{
-          width: "800px",
-          height: "445px",
-          borderRadius: "6px",
+          width: "880px",
+          height: "480px",
+          borderRadius: "12px",
           backgroundColor: "#fff",
           display: "flex",
+          boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
+          overflow: "hidden",
         }}
       >
-        <WrapperContainerLeft>
-          <h1 style={{ fontWeight: "bold", fontSize: "30px" }}>Xin chào</h1>
-          <p style={{ fontWeight: "bold", fontSize: "12px" }}>
-            Đăng nhập hoặc Tạo tài khoản
+        {/* LEFT SIDE */}
+        <WrapperContainerLeft style={{ flex: 1.2, padding: "40px 30px" }}>
+          <h1 style={{ fontWeight: "bold", fontSize: "32px", marginBottom: 8 }}>
+            Xin chào!
+          </h1>
+          <p style={{ fontSize: "14px", color: "#888", marginBottom: 24 }}>
+            Đăng nhập hoặc tạo tài khoản để tiếp tục
           </p>
+
           <InputForm
-            style={{
-              marginBottom: "10px",
-              padding: "10px",
-            }}
-            placeholder="adc@gmail.com"
+            style={{ marginBottom: 12, padding: 12 }}
+            placeholder="abc@gmail.com"
             value={email}
             onChange={handleOnchangeEmail}
           />
-          <div style={{ position: "relative" }}>
+
+          <div style={{ position: "relative", marginBottom: 12 }}>
             <span
               onClick={() => setIsShowPassword(!isShowPassword)}
               style={{
-                zIndex: 10,
                 position: "absolute",
-                top: "12px",
-                right: "8px",
+                top: "50%",
+                right: 12,
+                transform: "translateY(-50%)",
+                cursor: "pointer",
               }}
             >
               {isShowPassword ? (
-                <EyeFilled style={{ fontSize: "20px", color: "blue" }} />
+                <EyeFilled style={{ fontSize: 18, color: "blue" }} />
               ) : (
-                <EyeInvisibleFilled
-                  style={{ fontSize: "20px", color: "gray" }}
-                />
+                <EyeInvisibleFilled style={{ fontSize: 18, color: "gray" }} />
               )}
             </span>
             <InputForm
-              placeholder="password"
+              placeholder="Mật khẩu"
               type={isShowPassword ? "text" : "password"}
               value={password}
               onChange={handleOnchangePassword}
-              style={{
-                padding: "10px",
-              }}
+              style={{ padding: 12 }}
             />
           </div>
+
           {data?.status === "ERR" && (
-            <span
+            <div
               style={{
                 color: "red",
-                marginTop: "10px",
-                fontSize: "15px",
+                fontSize: "14px",
                 fontStyle: "italic",
+                marginBottom: 8,
               }}
             >
               {data?.message || "Đăng nhập thất bại!"}
-            </span>
+            </div>
           )}
 
           <Loading isPending={isPending}>
             <ButtonComponent
-              disabled={!email.length || !password.length}
+              disabled={!email || !password}
               onClick={handleSignIn}
-              size={40}
               styleButton={{
-                background: "rgb(255, 57, 69)",
-                height: "48px",
+                background: "#ff4d4f",
+                height: 48,
                 width: "100%",
                 border: "none",
-                borderRadius: "4px",
-                margin: "10px 0 10px 0",
+                borderRadius: "6px",
+                marginBottom: 12,
               }}
-              textButton={"Đăng nhập"}
+              textButton="Đăng nhập"
               styleTextButton={{
                 color: "#fff",
-                fontSize: "15px",
-                fontWeight: "700",
+                fontSize: 15,
+                fontWeight: 600,
               }}
-            ></ButtonComponent>
+            />
           </Loading>
-          <p>
-            <WrapperTextLight onClick={handleNavigateForget}>
-              Quên mật khẩu
+
+          <div style={{ fontSize: 13 }}>
+            <WrapperTextLight
+              onClick={handleNavigateForget}
+              style={{ cursor: "pointer", color: "#1890ff" }}
+            >
+              Quên mật khẩu?
             </WrapperTextLight>
-          </p>
-          <p>
-            <WrapperText> Chưa có tài khoản?</WrapperText>
+          </div>
+
+          <div style={{ fontSize: 13, marginTop: 12 }}>
+            <WrapperText>Bạn chưa có tài khoản?</WrapperText>
             <WrapperTextLight
               onClick={handleNavigateSignUp}
-              style={{ marginLeft: "5px" }}
+              style={{ marginLeft: 5, color: "#1890ff", cursor: "pointer" }}
             >
-              Tạo tài khoản
+              Đăng ký ngay
             </WrapperTextLight>
-          </p>
-          <div>
+          </div>
+
+          <div style={{ marginTop: 20 }}>
             <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
           </div>
         </WrapperContainerLeft>
-        <WrapperContainerRight>
+
+        {/* RIGHT SIDE */}
+        <WrapperContainerRight
+          style={{
+            flex: 1,
+            background: "#f7f7f7",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "0 20px",
+          }}
+        >
           <Image
             src={login}
             preview={false}
             alt="image-login"
-            height="203px"
-            width="250px"
-            style={{ borderRadius: "50%", objectFit: "cover" }}
+            height="200px"
+            width="260px"
+            style={{
+              borderRadius: "12px",
+              objectFit: "cover",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+            }}
           />
-          <h2 style={{ fontWeight: "bold", marginTop: "10px" }}>
+          <h2
+            style={{
+              fontWeight: "bold",
+              marginTop: "20px",
+              color: "#333",
+            }}
+          >
             Mua sắm tại TKTK
           </h2>
         </WrapperContainerRight>

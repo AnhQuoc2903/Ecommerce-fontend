@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import {
   WrapperButtonMore,
   WrapperProducts,
   WrapperTypeProduct,
 } from "./style";
-import SliderCompenent from "../../components/SliderComponent/SliderCompenent";
 import slice1 from "../../assets/images/Slice1.jpg";
-import slice5 from "../../assets/images/Slice4.jpg";
-import slice4 from "../../assets/images/Slice5.jpg";
+import slice5 from "../../assets/images/Slice2.jpg";
+import slice4 from "../../assets/images/Slice3.jpg";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import { useQuery } from "@tanstack/react-query";
 import * as ProductServices from "../../services/ProductServices";
@@ -17,12 +16,32 @@ import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
 import Banner from "../../components/Banner/Banner";
 import { Empty } from "antd";
+import "./HomePage.css";
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 300);
   const [limit, setLimit] = useState(5);
   const [typeProducts, setTypeProducts] = useState();
+
+  const sliderImages = [slice1, slice5, slice4];
+  const scrollRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Auto scroll effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextIndex = (currentIndex + 1) % sliderImages.length;
+      setCurrentIndex(nextIndex);
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({
+          left: nextIndex * scrollRef.current.offsetWidth,
+          behavior: "smooth",
+        });
+      }
+    }, 3000); // Change image every 3s
+    return () => clearInterval(interval);
+  }, [currentIndex]);
 
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1];
@@ -56,7 +75,54 @@ const HomePage = () => {
 
   return (
     <>
-      <SliderCompenent arrImages={[slice1, slice5, slice4]} />
+      {/* Auto-play Carousel */}
+      <div
+        style={{
+          width: "100%",
+          maxHeight: "500px",
+          overflow: "hidden",
+          marginBottom: "24px",
+          borderRadius: "8px",
+        }}
+      >
+        <div
+          ref={scrollRef}
+          style={{
+            display: "flex",
+            overflowX: "auto",
+            scrollSnapType: "x mandatory",
+            scrollBehavior: "smooth",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          {sliderImages.map((image, index) => (
+            <div
+              key={index}
+              style={{
+                flex: "0 0 100%",
+                scrollSnapAlign: "start",
+                position: "relative",
+              }}
+            >
+              <img
+                src={image}
+                alt={`Slide ${index + 1}`}
+                loading="lazy"
+                style={{
+                  width: "100%",
+                  height: "500px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  display: "block",
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Type Product */}
       <div
         style={{
           width: "100%",
@@ -75,6 +141,8 @@ const HomePage = () => {
           })}
         </WrapperTypeProduct>
       </div>
+
+      {/* Products */}
       <Loading isPending={isPending}>
         <div
           className="body"
@@ -91,39 +159,42 @@ const HomePage = () => {
             }}
           >
             <WrapperProducts>
-              {!isPending && products?.data?.length > 0
-                ? products?.data?.map((product) => (
-                    <CardComponent
-                      key={product?._id}
-                      countInStock={product?.countInStock}
-                      description={product?.description}
-                      images={product?.images[0]}
-                      name={product?.name}
-                      price={product?.price}
-                      rating={product?.rating}
-                      type={product?.type}
-                      discount={product?.discount}
-                      seller={product?.seller}
-                      id={product?._id}
-                    />
-                  ))
-                : !isPending && (
-                    <Empty
-                      description={
-                        <span style={{ color: "#ff0000", fontWeight: "bold" }}>
-                          Không tìm thấy sản phẩm nào!
-                        </span>
-                      }
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                    />
-                  )}
+              {!isPending && products?.data?.length > 0 ? (
+                products?.data?.map((product) => (
+                  <CardComponent
+                    key={product?._id}
+                    countInStock={product?.countInStock}
+                    description={product?.description}
+                    images={product?.images[0]}
+                    name={product?.name}
+                    price={product?.price}
+                    rating={product?.rating}
+                    type={product?.type}
+                    discount={product?.discount}
+                    seller={product?.seller}
+                    id={product?._id}
+                  />
+                ))
+              ) : (
+                !isPending && (
+                  <Empty
+                    description={
+                      <span style={{ color: "#ff0000", fontWeight: "bold" }}>
+                        Không tìm thấy sản phẩm nào!
+                      </span>
+                    }
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  />
+                )
+              )}
             </WrapperProducts>
 
+            {/* Load more */}
             <div
               style={{
                 width: "100%",
@@ -136,8 +207,11 @@ const HomePage = () => {
                 textButton={isPreviousData ? "Load more" : "Xem thêm"}
                 type="outline"
                 style={{
-                  border: "1px solid rgb(11,116,229)",
-                  color: `${products?.total === products?.data?.length ? "#ccc" : "rgb(11,116,229)"}`,
+                  border: "1px solid rgb(66, 231, 11)",
+                  color:
+                    products?.total === products?.data?.length
+                      ? "#ccc"
+                      : "rgb(66, 231, 11)",
                   width: "240px",
                   height: "38px",
                   borderRadius: "4px",
@@ -151,7 +225,7 @@ const HomePage = () => {
                   color:
                     products?.total === products?.data?.length
                       ? "#fff"
-                      : "rgb(11,116,229)",
+                      : "rgb(66, 231, 11)",
                 }}
                 onClick={() => setLimit((prev) => prev + 5)}
               />
@@ -159,6 +233,8 @@ const HomePage = () => {
           </div>
         </div>
       </Loading>
+
+      {/* Banner */}
       <Banner />
     </>
   );

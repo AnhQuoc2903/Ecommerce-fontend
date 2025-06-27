@@ -6,114 +6,107 @@ import { GiFoodTruck } from "react-icons/gi";
 import { FaGift } from "react-icons/fa";
 import BannerImg from "../../assets/images/women2.jpg";
 
+const features = [
+  {
+    icon: <GrSecure size={18} style={{ color: "#000" }} />,
+    bgColor: "#e9d5ff",
+    label: "Sản phẩm chất lượng",
+  },
+  {
+    icon: <IoFastFood size={18} style={{ color: "#000" }} />,
+    bgColor: "#fa8c16",
+    label: "Giao hàng nhanh",
+  },
+  {
+    icon: <GiFoodTruck size={18} style={{ color: "#000" }} />,
+    bgColor: "#52c41a",
+    label: "Phương thức thanh toán dễ dàng",
+  },
+  {
+    icon: <FaGift size={18} style={{ color: "#000" }} />,
+    bgColor: "#fadb14",
+    label: "Nhận ưu đãi",
+  },
+];
+
 const Banner = () => {
   return (
-    <div
+    <section
       style={{
         minHeight: 550,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        padding: "40px 20px",
+        backgroundColor: "#fff",
       }}
     >
-      <div style={{ display: "flex", gap: "20px" }}>
-        <Col xs={24} sm={12} style={{ height: "100%" }}>
+      <article
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "40px",
+          maxWidth: "1200px",
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Col xs={24} sm={12}>
           <Image
             src={BannerImg}
-            alt="Banner"
+            alt="Người phụ nữ đang cầm sản phẩm thủ công"
             preview={false}
+            title="Sản phẩm thủ công tinh xảo"
             style={{
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              boxShadow: "-10px 10px 12px rgba(0,0,0,1)",
+              borderRadius: 12,
+              boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
             }}
           />
         </Col>
 
         <Col xs={24} sm={12}>
           <Space direction="vertical" size="large">
-            <h1 style={{ fontWeight: "bold" }}>Giảm giá lên tới 50%</h1>
-            <div style={{ color: "gray" }}>
+            <h1 style={{ fontWeight: "bold", fontSize: 32 }}>
+              Ưu đãi bất ngờ
+            </h1>
+            <p style={{ color: "gray", fontSize: 16, lineHeight: 1.6 }}>
               Chuyên cung cấp đồ lưu niệm thủ công tinh xảo – mỗi sản phẩm là
               một tác phẩm nghệ thuật mang đậm dấu ấn sáng tạo.
-            </div>
+            </p>
 
             <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-              <div
-                bordered={false}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <Avatar
+              {features.map((item, index) => (
+                <div
+                  key={index}
                   style={{
-                    backgroundColor: "#e9d5ff",
-                    padding: 12,
-                    width: "50px",
-                    height: "50px",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  <GrSecure size={18} style={{ color: "#000" }} />
-                </Avatar>
-                <span style={{ marginLeft: 12 }}>Sản phẩm chất lượng</span>
-              </div>
-              <div
-                bordered={false}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <Avatar
-                  style={{
-                    backgroundColor: "#fa8c16",
-                    padding: 12,
-                    width: "50px",
-                    height: "50px",
-                  }}
-                >
-                  <IoFastFood size={18} style={{ color: "#000" }} />
-                </Avatar>
-                <span style={{ marginLeft: 12 }}>Giao hàng nhanh</span>
-              </div>
-              <div
-                bordered={false}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Avatar
-                  style={{
-                    backgroundColor: "#52c41a",
-                    padding: 12,
-                    width: "50px",
-                    height: "50px",
-                  }}
-                >
-                  <GiFoodTruck size={18} style={{ color: "#000" }} />
-                </Avatar>
-                <span style={{ marginLeft: 12 }}>
-                  Phương thức thanh toán dễ dàng
-                </span>
-              </div>
-              <div
-                bordered={false}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <Avatar
-                  style={{
-                    backgroundColor: "#fadb14",
-                    padding: 12,
-                    width: "50px",
-                    height: "50px",
-                  }}
-                >
-                  <FaGift size={18} style={{ color: "#000" }} />
-                </Avatar>
-                <span style={{ marginLeft: 12 }}>Nhận ưu đãi</span>
-              </div>
+                  <Avatar
+                    style={{
+                      backgroundColor: item.bgColor,
+                      padding: 12,
+                      width: 50,
+                      height: 50,
+                    }}
+                    alt={item.label}
+                    title={item.label}
+                  >
+                    {item.icon}
+                  </Avatar>
+                  <h2 style={{ marginLeft: 12, fontSize: 16 }}>{item.label}</h2>
+                </div>
+              ))}
             </Space>
           </Space>
         </Col>
-      </div>
-    </div>
+      </article>
+    </section>
   );
 };
 
