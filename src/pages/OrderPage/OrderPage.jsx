@@ -1,13 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Checkbox, Col, Form, Input, Row } from "antd";
 import {
   WrapperCountOrder,
   WrapperInfo,
   WrapperItemOrder,
-  WrapperLeft,
   WrapperStyleHeader,
   WrapperListOrder,
-  WrapperRight,
   WrapperTotal,
   WrapperInputNumber,
 } from "./style";

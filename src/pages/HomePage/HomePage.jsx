@@ -47,12 +47,12 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, [sliderImages.length]);
 
-  // Reset limit khi search thay đổi
+  // Reset limit khi search thay đổi - FIXED: Added searchProduct dependency
   useEffect(() => {
     if (searchDebounce !== searchProduct) {
       setLimit(6); // Reset về limit ban đầu khi search
     }
-  }, [searchDebounce]);
+  }, [searchDebounce, searchProduct]); // Added searchProduct to dependencies
 
   // Fetch products với error handling tốt hơn
   const fetchProductAll = async (context) => {

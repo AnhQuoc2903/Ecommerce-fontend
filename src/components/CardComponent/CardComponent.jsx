@@ -67,7 +67,7 @@ const CardComponent = (props) => {
 
         {/* Đã bán */}
         <WrapperStyleTextSell as="p">
-          Đã bán {seller || 1000}+
+          Đã bán {seller || 50}+
         </WrapperStyleTextSell>
 
         {/* Giá */}
